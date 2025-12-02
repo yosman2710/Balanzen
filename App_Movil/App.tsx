@@ -6,6 +6,7 @@ import { WelcomeScreen } from "./src/screen/WelcomeScreen";
 import { RegisterScreen } from "./src/screen/RegisterScreen";
 import { LoginScreen } from "./src/screen/LoginScreen";
 import { Dashboard } from "./src/screen/DashboardScreen";
+import { TransactionsScreen } from "./src/screen/TransactionsScreen";
 
 enableScreens();
 
@@ -17,11 +18,12 @@ export default function App() {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Dashboard">
+      <Stack.Navigator initialRouteName="Transactions">
         <Stack.Screen name="MainTabs" component={WelcomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }} />
+        <Stack.Screen name="Transactions" component={TransactionsScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

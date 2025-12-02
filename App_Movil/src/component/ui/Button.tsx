@@ -1,10 +1,10 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, Text, ViewStyle } from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, ViewStyle, StyleProp } from 'react-native';
 
 interface ButtonProps {
     children: React.ReactNode;
     onPress: () => void;
-    style?: ViewStyle;
+    style?: StyleProp<ViewStyle>;
 }
 
 export const Button: React.FC<ButtonProps> = ({ children, onPress, style }) => {
