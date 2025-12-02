@@ -5,6 +5,7 @@ import { enableScreens } from "react-native-screens";
 import { WelcomeScreen } from "./src/screen/WelcomeScreen";
 import { RegisterScreen } from "./src/screen/RegisterScreen";
 import { LoginScreen } from "./src/screen/LoginScreen";
+import { Dashboard } from "./src/screen/DashboardScreen";
 
 enableScreens();
 
@@ -16,11 +17,11 @@ export default function App() {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="MainTabs">
+      <Stack.Navigator initialRouteName="Dashboard">
         <Stack.Screen name="MainTabs" component={WelcomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-
+        <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
