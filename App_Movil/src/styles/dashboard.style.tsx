@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
   primaryButton: {
     flex: 1,
     backgroundColor: '#10b981',
-    paddingVertical: 24,
+    paddingVertical: 16,
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#10b981',
     backgroundColor: 'transparent',
-    paddingVertical: 24,
+    paddingVertical: 16,
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',

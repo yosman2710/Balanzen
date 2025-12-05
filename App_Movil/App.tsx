@@ -5,6 +5,7 @@ import { enableScreens } from "react-native-screens";
 import { WelcomeScreen } from "./src/screen/WelcomeScreen";
 import { RegisterScreen } from "./src/screen/RegisterScreen";
 import { LoginScreen } from "./src/screen/LoginScreen";
+import { AddTransactionWrapper } from "./src/components/AddTransactionWrapper";
 
 import { TabNavigation } from "./src/navegation/TabNavegation";
 enableScreens();
@@ -22,6 +23,11 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="welcome" component={WelcomeScreen} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="AddTransaction"
+          component={AddTransactionWrapper}
+          options={{ headerShown: false }} // modal full-screen
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

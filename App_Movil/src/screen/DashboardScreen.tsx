@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     View,
     ScrollView,
@@ -28,8 +29,12 @@ interface Transaction {
     category: string;
     date: string;
 }
+interface DashboardProps {
+    onAddIncome: () => void;
+    onAddExpense: () => void;
+}
 
-export function Dashboard() {
+export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
     const [showMenu, setShowMenu] = useState(false);
 
     const currentMonth = new Date().toLocaleDateString('es-ES', { month: 'long' });
@@ -94,63 +99,65 @@ export function Dashboard() {
     };
 
     return (
-        <ScrollView style={styles.container}>
-            {/* Tarjetas principales */}
-            <View style={styles.cardsContainer}>
-                <IncomeCard
-                    amount={monthIncome}
-                    change={incomeChange}
-                    month={currentMonth}
-                />
-                <ExpenseCard
-                    amount={monthExpenses}
-                    change={expenseChange}
-                />
-                <BalanceCard
-                    amount={monthBalance}
-                    percentage={((monthBalance / monthIncome) * 100)}
-                />
-            </View>
-
-            {/* Acciones rápidas */}
-            <View style={styles.actionsGrid}>
-                <Button
-                    style={styles.primaryButton}
-                    onPress={() => { console.log('Ingreso'); }}
-                >
-                    <Plus size={20} color="white" style={styles.icon} />
-                    <Text style={styles.buttonText}>Ingreso</Text>
-                </Button>
-                <Button
-                    style={styles.outlineButton}
-                    onPress={() => { console.log('Gasto'); }}
-                >
-                    <Plus size={20} color="#10b981" style={styles.icon} />
-                    <Text style={styles.outlineButtonText}>Gasto</Text>
-                </Button>
-            </View>
-
-            {/* Meta de ahorro */}
-            <SavingsGoalCard goal={savingsGoal} />
-
-            {/* Gráfica */}
-            <Card style={styles.chartCard}>
-                <View style={styles.chartHeader}>
-                    <Text style={styles.chartTitle}>Balance Últimos 5 Meses</Text>
-                    <Text style={styles.chartSubtitle}>Evolución del ahorro mensual</Text>
+        <SafeAreaView style={styles.container}>
+            <ScrollView>
+                {/* Tarjetas principales */}
+                <View style={styles.cardsContainer}>
+                    <IncomeCard
+                        amount={monthIncome}
+                        change={incomeChange}
+                        month={currentMonth}
+                    />
+                    <ExpenseCard
+                        amount={monthExpenses}
+                        change={expenseChange}
+                    />
+                    <BalanceCard
+                        amount={monthBalance}
+                        percentage={((monthBalance / monthIncome) * 100)}
+                    />
                 </View>
-                <LineChart
-                    data={monthlyData}
-                    width={Dimensions.get('window').width - 48}
-                    height={200}
-                    chartConfig={chartConfig}
-                    bezier
-                    style={styles.chart}
-                />
-            </Card>
 
-            {/* Transacciones recientes */}
-            <RecentTransactions transactions={recentTransactions} />
-        </ScrollView>
+                {/* Acciones rápidas */}
+                <View style={styles.actionsGrid}>
+                    <Button
+                        style={styles.primaryButton}
+                        onPress={onAddIncome}
+                    >
+                        <Plus size={20} color="white" style={styles.icon} />
+                        <Text style={styles.buttonText}>Ingreso</Text>
+                    </Button>
+                    <Button
+                        style={styles.outlineButton}
+                        onPress={onAddExpense}
+                    >
+                        <Plus size={20} color="#10b981" style={styles.icon} />
+                        <Text style={styles.outlineButtonText}>Gasto</Text>
+                    </Button>
+                </View>
+
+                {/* Meta de ahorro */}
+                <SavingsGoalCard goal={savingsGoal} />
+
+                {/* Gráfica */}
+                <Card style={styles.chartCard}>
+                    <View style={styles.chartHeader}>
+                        <Text style={styles.chartTitle}>Balance Últimos 5 Meses</Text>
+                        <Text style={styles.chartSubtitle}>Evolución del ahorro mensual</Text>
+                    </View>
+                    <LineChart
+                        data={monthlyData}
+                        width={Dimensions.get('window').width - 48}
+                        height={200}
+                        chartConfig={chartConfig}
+                        bezier
+                        style={styles.chart}
+                    />
+                </Card>
+
+                {/* Transacciones recientes */}
+                <RecentTransactions transactions={recentTransactions} />
+            </ScrollView>
+        </SafeAreaView>
     );
 }

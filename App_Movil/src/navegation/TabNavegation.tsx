@@ -6,7 +6,30 @@ import { BudgetsScreen } from "../screen/BudgetsScreen";
 import { ProfileScreen } from "../screen/ProfileScreen";
 import { Ionicons } from "@expo/vector-icons";
 import GestureRecognizer from "react-native-swipe-gestures";
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from './type';
 
+
+type RootNav = NativeStackNavigationProp<RootStackParamList>;
+function DashboardWrapper() {
+    const navigation = useNavigation<RootNav>();
+
+    const handleAddIncome = () => {
+        navigation.navigate('AddTransaction', { defaultType: 'income' });
+    };
+
+    const handleAddExpense = () => {
+        navigation.navigate('AddTransaction', { defaultType: 'expense' });
+    };
+
+    return (
+        <Dashboard
+            onAddIncome={handleAddIncome}
+            onAddExpense={handleAddExpense}
+        />
+    );
+}
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
 
 export type TabParamList = {
@@ -56,7 +79,7 @@ export function TabNavigation() {
                 },
             })}
         >
-            <Tab.Screen name="Dashboard" component={withSwipe(Dashboard, "Transactions", "Profile")} />
+            <Tab.Screen name="Dashboard" component={withSwipe(DashboardWrapper, "Transactions", "Profile")} />
             <Tab.Screen name="Transactions" component={withSwipe(TransactionsScreen, "Budgets", "Dashboard")} />
             <Tab.Screen name="Budgets" component={withSwipe(BudgetsScreen, "Profile", "Transactions")} />
             <Tab.Screen name="Profile" component={withSwipe(ProfileScreen, "Dashboard", "Budgets")} />
