@@ -5,7 +5,11 @@ import { Card } from '../component/ui/Card';
 import { Button } from '../component/ui/Button';
 import { ProgressBar } from '../component/ui/ProgressBar';
 import { styles } from '../styles/Budgets.style';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../navegation/type'; // ajusta la ruta
 
+type RootNav = NativeStackNavigationProp<RootStackParamList>;
 interface Budget {
     id: string;
     name: string;
@@ -18,6 +22,7 @@ interface Budget {
 
 
 export function BudgetsScreen() {
+    const navigation = useNavigation<RootNav>();
     const currentMonth = new Date().toLocaleDateString('es-ES', { month: 'long' });
 
     // Datos simulados como si vinieran de la base de datos
@@ -136,7 +141,7 @@ export function BudgetsScreen() {
                 <View style={styles.listWrapper}>
                     <View style={styles.listHeaderRow}>
                         <Text style={styles.listTitle}>Por Categoría</Text>
-                        <Button onPress={() => { console.log('Nuevo') }} style={styles.newButton}>
+                        <Button onPress={() => navigation.navigate('AddBudget')} style={styles.newButton}>
                             <Text style={styles.newButtonText}>Nuevo</Text>
                         </Button>
                     </View>

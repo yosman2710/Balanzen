@@ -3,4 +3,5 @@ export type RootStackParamList = {
     Register: undefined;
     Login: undefined;
     AddTransaction: { defaultType: 'income' | 'expense' };
+    AddBudget: undefined;
 };

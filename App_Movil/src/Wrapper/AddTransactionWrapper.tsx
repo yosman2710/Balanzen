@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { AddTransactionScreen } from '../screen/AddTransactionScreen';
-import { categoriesMock } from './categories'; // tus categorías simuladas
+import { categoriesMock } from '../components/categories'; // tus categorías simuladas
 // Mock handler - cámbialo por tu lógica real después
 const mockAddTransaction = (transaction: any) => {
     console.log('Nueva transacción:', transaction);
