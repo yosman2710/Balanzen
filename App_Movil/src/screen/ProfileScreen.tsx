@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import {
     User,
@@ -18,12 +18,14 @@ import { Button } from '../component/ui/Button';
 import { Switch } from '../component/ui/Switch';
 import { Avatar } from '../component/ui/Avatar';
 import { styles } from '../styles/Profile.style';
+import { useNavigation } from '@react-navigation/native';
+import type { RootStackParamList } from '../navegation/type'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 interface ProfileScreenProps {
     userName?: string;
     userEmail?: string;
     onLogout?: () => void;
-    onManageCategories?: () => void;
 }
 
 const getInitials = (name: string) =>
@@ -34,7 +36,19 @@ const getInitials = (name: string) =>
         .toUpperCase()
         .slice(0, 2);
 
-export function ProfileScreen({ userName, userEmail, onLogout, onManageCategories }: ProfileScreenProps) {
+export function ProfileScreen({
+    userName = 'Demo User',
+    userEmail = 'demo@user.com',
+    onLogout
+}: ProfileScreenProps) {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+    const handleDeleteCategory = (categoryId: string) => {
+        console.log('Eliminar categoría:', categoryId);
+    };
+
+
+
     return (
         <View style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -44,10 +58,10 @@ export function ProfileScreen({ userName, userEmail, onLogout, onManageCategorie
                         <Avatar
                             size={96}
                             backgroundColor="rgba(255,255,255,0.2)"
-                            text={getInitials(userName || 'Demo User')}
+                            text={getInitials(userName)}
                         />
-                        <Text style={styles.headerName}>{userName || 'Demo User'}</Text>
-                        <Text style={styles.headerEmail}>{userEmail || 'demo@user.com'}</Text>
+                        <Text style={styles.headerName}>{userName}</Text>
+                        <Text style={styles.headerEmail}>{userEmail}</Text>
                     </View>
                 </View>
 
@@ -86,7 +100,7 @@ export function ProfileScreen({ userName, userEmail, onLogout, onManageCategorie
                                 iconBg="#d1fae5"
                                 title="Gestionar categorías"
                                 subtitle="Crear, editar y eliminar categorías"
-                                onPress={() => { console.log('Gestionar categorías') }}
+                                onPress={() => navigation.navigate('Categories')}
                                 showChevron
                             />
                         </Card>
@@ -154,7 +168,7 @@ export function ProfileScreen({ userName, userEmail, onLogout, onManageCategorie
                     </Card>
 
                     {/* Cerrar sesión */}
-                    <Button onPress={() => { console.log('Cerrar sesión') }} style={styles.logoutButton}>
+                    <Button onPress={() => { console.log('Cerrar sesión'); }} style={styles.logoutButton}>
                         <LogOut size={20} color="#dc2626" style={{ marginRight: 8 }} />
                         <Text style={styles.logoutText}>Cerrar sesión</Text>
                     </Button>
@@ -166,6 +180,7 @@ export function ProfileScreen({ userName, userEmail, onLogout, onManageCategorie
     );
 };
 
+// ProfileRow component (sin cambios)
 interface ProfileRowProps {
     icon: React.ReactNode;
     iconBg: string;
