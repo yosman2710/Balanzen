@@ -1,12 +1,12 @@
 import db from "../db.js";
 
 // Crear categoría personalizada (requiere id_usuario y asume no predeterminada)
-export const insertCategoria = async (nombre_categoria, tipo, id_usuario, es_predeterminada = false) => {
+export const insertCategoria = async (nombre_categoria, tipo, id_usuario, color, icon, es_predeterminada = false) => {
   const query = `
-    INSERT INTO categorias (nombre_categoria, tipo, id_usuario, es_predeterminada)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO categorias (nombre_categoria, tipo, id_usuario, color, icon, es_predeterminada)
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
-  const [result] = await db.query(query, [nombre_categoria, tipo, id_usuario, es_predeterminada]);
+  const [result] = await db.query(query, [nombre_categoria, tipo, id_usuario, color, icon, es_predeterminada]);
   return result.insertId;
 };
 

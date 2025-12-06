@@ -1,12 +1,12 @@
 import db from "../db";
 
 // Crear una transacción
-export const createTransaccion = async ({ id_usuario, id_categoria, monto, fecha, descripcion }) => {
+export const createTransaccion = async ({ id_usuario, id_categoria, monto, fecha, descripcion, nombre_transaccion }) => {
   const query = `
-    INSERT INTO transacciones (id_usuario, id_categoria, monto, fecha, descripcion)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO transacciones (id_usuario, id_categoria, monto, fecha, descripcion, nombre_transaccion)
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
-  const [result] = await db.query(query, [id_usuario, id_categoria, monto, fecha, descripcion]);
+  const [result] = await db.query(query, [id_usuario, id_categoria, monto, fecha, descripcion, nombre_transaccion]);
   return result.insertId; // Devuelve el id de la nueva transacción
 };
 

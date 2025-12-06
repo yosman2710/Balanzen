@@ -7,13 +7,14 @@ import {
 } from '../models/categorias.model.js';
 
 // Regla de negocio: no permitir duplicados personalizados para el mismo usuario
-export const createCategoriaService = async (nombre_categoria, tipo, id_usuario) => {
+// Regla de negocio: no permitir duplicados personalizados para el mismo usuario
+export const createCategoriaService = async (nombre_categoria, tipo, id_usuario, color, icon) => {
   // Verificar duplicado (del usuario o predeterminada con mismo nombre)
   const found = await getCategoriasByName(nombre_categoria, id_usuario);
   if (found.some(cat => cat.nombre_categoria === nombre_categoria && cat.id_usuario === id_usuario)) {
     throw new Error("Ya existe una categoría personalizada con ese nombre.");
   }
-  return await insertCategoria(nombre_categoria, tipo, id_usuario, false);
+  return await insertCategoria(nombre_categoria, tipo, id_usuario, color, icon, false);
 };
 
 // Eliminar solo si NO es predeterminada y es del usuario. Regla de negocio: no eliminar predeterminada

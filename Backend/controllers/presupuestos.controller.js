@@ -3,7 +3,8 @@ import {
   deletePresupuestoService,
   updatePresupuestoService,
   findPresupuestosByUsuarioService,
-  findPresupuestosByPeriodoService,
+  findPresupuestosByUsuarioService,
+  findPresupuestosByFechaService,
   findPresupuestosByCategoriaService
 } from '../services/presupuestos.service.js';
 
@@ -11,8 +12,8 @@ import {
 export const createPresupuestoController = async (req, res) => {
   try {
     const id_usuario = req.user.id; // autenticado
-    const { id_categoria, monto_limite, mes, anio } = req.body;
-    const id = await createPresupuestoService({ id_usuario, id_categoria, monto_limite, mes, anio });
+    const { id_categoria, monto_limite, fecha_inicio, fecha_final, alerta } = req.body;
+    const id = await createPresupuestoService({ id_usuario, id_categoria, monto_limite, fecha_inicio, fecha_final, alerta });
     res.status(201).json({ id });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -36,9 +37,9 @@ export const updatePresupuestoController = async (req, res) => {
   try {
     const id_usuario = req.user.id;
     const { id_presupuesto } = req.params;
-    const { monto_limite, mes, anio } = req.body;
-    await updatePresupuestoService(id_presupuesto, id_usuario, { monto_limite, mes, anio });
-    res.json({ message: 'Presupuesto actualizado correctamente' });
+    const { monto_limite, fecha_inicio, fecha_final, alerta } = req.body;
+    const updated = await updatePresupuestoService(id_presupuesto, id_usuario, { monto_limite, fecha_inicio, fecha_final, alerta });
+    res.json({ message: 'Presupuesto actualizado correctamente', updated });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -55,12 +56,12 @@ export const getPresupuestosController = async (req, res) => {
   }
 };
 
-// Buscar por periodo
-export const getPresupuestosByPeriodoController = async (req, res) => {
+// Buscar por fecha
+export const getPresupuestosByFechaController = async (req, res) => {
   try {
     const id_usuario = req.user.id;
-    const { mes, anio } = req.query;
-    const presupuestos = await findPresupuestosByPeriodoService(id_usuario, mes, anio);
+    const { fecha } = req.query;
+    const presupuestos = await findPresupuestosByFechaService(id_usuario, fecha);
     res.json(presupuestos);
   } catch (err) {
     res.status(400).json({ error: err.message });

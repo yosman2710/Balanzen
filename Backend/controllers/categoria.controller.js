@@ -8,9 +8,9 @@ import {
 
 export const createCategoriaController = async (req, res) => {
   try {
-    const { nombre_categoria, tipo } = req.body;
+    const { nombre_categoria, tipo, color, icon } = req.body;
     const userId = req.user.id;
-    const id = await createCategoriaService(nombre_categoria, tipo, userId);
+    const id = await createCategoriaService(nombre_categoria, tipo, userId, color, icon);
     res.status(201).json({ id });
   } catch (err) {
     res.status(400).json({ error: err.message });

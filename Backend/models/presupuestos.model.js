@@ -1,12 +1,12 @@
 import db from "../db";
 
 // Crear un presupuesto
-export const createPresupuesto = async ({ id_usuario, id_categoria, monto_limite, mes, anio }) => {
+export const createPresupuesto = async ({ id_usuario, id_categoria, monto_limite, fecha_inicio, fecha_final, alerta }) => {
   const query = `
-    INSERT INTO presupuestos (id_usuario, id_categoria, monto_limite, mes, anio)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO presupuestos (id_usuario, id_categoria, monto_limite, fecha_inicio, fecha_final, alerta)
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
-  const [result] = await db.query(query, [id_usuario, id_categoria, monto_limite, mes, anio]);
+  const [result] = await db.query(query, [id_usuario, id_categoria, monto_limite, fecha_inicio, fecha_final, alerta]);
   return result.insertId;
 };
 
@@ -31,13 +31,13 @@ export const findPresupuestosByUsuario = async (id_usuario) => {
   return rows;
 };
 
-// Buscar presupuestos por año y mes para un usuario (útil para dashboards)
-export const findPresupuestosByPeriodo = async (id_usuario, mes, anio) => {
+// Buscar presupuestos validos en una fecha (útil para dashboards)
+export const findPresupuestosByFecha = async (id_usuario, fecha) => {
   const query = `
     SELECT * FROM presupuestos
-    WHERE id_usuario = ? AND mes = ? AND anio = ?
+    WHERE id_usuario = ? AND ? BETWEEN fecha_inicio AND fecha_final
   `;
-  const [rows] = await db.query(query, [id_usuario, mes, anio]);
+  const [rows] = await db.query(query, [id_usuario, fecha]);
   return rows;
 };
 
@@ -49,11 +49,11 @@ export const findPresupuestosByCategoria = async (id_categoria) => {
 };
 
 // Actualizar presupuesto por id
-export const updatePresupuesto = async (id_presupuesto, { monto_limite, mes, anio }) => {
+export const updatePresupuesto = async (id_presupuesto, { monto_limite, fecha_inicio, fecha_final, alerta }) => {
   const query = `
-    UPDATE presupuestos SET monto_limite = ?, mes = ?, anio = ?
+    UPDATE presupuestos SET monto_limite = ?, fecha_inicio = ?, fecha_final = ?, alerta = ?
     WHERE id_presupuesto = ?
   `;
-  const [result] = await db.query(query, [monto_limite, mes, anio, id_presupuesto]);
+  const [result] = await db.query(query, [monto_limite, fecha_inicio, fecha_final, alerta, id_presupuesto]);
   return result.affectedRows > 0;
 };

@@ -5,9 +5,9 @@ import {
   deletePresupuestoController,
   updatePresupuestoController,
   getPresupuestosController,
-  getPresupuestosByPeriodoController,
+  getPresupuestosByFechaController,
   getPresupuestosByCategoriaController
-} from '../controllers/presupuesto.controller.js';
+} from '../controllers/presupuestos.controller.js';
 
 const router = Router();
 
@@ -23,8 +23,8 @@ router.put('/:id_presupuesto', verifyToken, updatePresupuestoController);
 // Listar todos (usuario)
 router.get('/', verifyToken, getPresupuestosController);
 
-// Listar por periodo
-router.get('/periodo', verifyToken, getPresupuestosByPeriodoController); // ?mes=MM&anio=YYYY
+// Listar por fecha
+router.get('/fecha', verifyToken, getPresupuestosByFechaController); // ?fecha=YYYY-MM-DD
 
 // Listar por categoría
 router.get('/categoria/:id_categoria', verifyToken, getPresupuestosByCategoriaController);
