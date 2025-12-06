@@ -1,4 +1,4 @@
-import db from "../db";
+import db from "../db.js";
 
 // Crear una transacción
 export const createTransaccion = async ({ id_usuario, id_categoria, monto, fecha, descripcion, nombre_transaccion }) => {
@@ -56,6 +56,14 @@ export const findTransaccionesByNombre = async (nombre_transaccion) => {
   return rows; // Devuelve un array de transacciones que coinciden
 };
 
+export const updateTransaccion = async (id_transaccion, { id_usuario, id_categoria, monto, fecha, descripcion, nombre_transaccion }) => {
+  const query = `
+    UPDATE transacciones SET id_usuario = ?, id_categoria = ?, monto = ?, fecha = ?, descripcion = ?, nombre_transaccion = ?
+    WHERE id_transaccion = ?
+  `;
+  const [result] = await db.query(query, [id_usuario, id_categoria, monto, fecha, descripcion, nombre_transaccion, id_transaccion]);
+  return result.affectedRows > 0;
+};
 
 
 

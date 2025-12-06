@@ -1,4 +1,4 @@
-import db from "../db";
+import db from "../db.js";
 
 // Crear un presupuesto
 export const createPresupuesto = async ({ id_usuario, id_categoria, monto_limite, fecha_inicio, fecha_final, alerta }) => {

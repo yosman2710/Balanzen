@@ -6,7 +6,7 @@ import {
   getGastosMesAnterior,
   getMonthlyIncomeExpenses,
   getRecentTransactions
-} from '../models/cargarDatosDashboard.models';
+} from '../models/cargarDatosDashboard.models.js';
 
 export const fetchDashboardData = async (userId) => {
   try {

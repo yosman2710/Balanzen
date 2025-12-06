@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import md5 from 'md5';
-import {findUserByEmail, insertUser} from '../models/usuarios.model';
+import { findUserByEmail, createUsuario } from '../models/usuarios.model.js';
 
 export const registerUserService = async (name, email, password) => {
     if (!name || !email || !password) {
@@ -13,7 +13,7 @@ export const registerUserService = async (name, email, password) => {
     }
 
     const hashedPassword = md5(password);
-    return await insertUser(name, email, hashedPassword);
+    return await createUsuario(name, email, hashedPassword);
 };
 
 export const loginUserService = async (email, password) => {
