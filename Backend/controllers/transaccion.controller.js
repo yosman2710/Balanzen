@@ -6,7 +6,8 @@ import {
     getTransaccionesByCategoriaNombreService,
     getTransaccionesByCategoriaTipoService,
     getTransaccionesByNombreService,
-    updateTransaccionService
+    updateTransaccionService,
+    getTransaccionesUserService
 } from '../services/transaccion.service.js';
 
 // Obtener una transacción por ID
@@ -23,8 +24,12 @@ export const getTransaccionById = async (req, res) => {
 // Crear una nueva transacción
 export const createTransaccion = async (req, res) => {
     try {
-        const nuevaTransaccion = await createTransaccionService(req.body);
-        res.status(201).json(nuevaTransaccion);
+        const userId = req.user.userId;
+        const nuevaTransaccion = await createTransaccionService({
+            ...req.body,
+            id_usuario: userId,
+        });
+        res.status(201).json({ id: nuevaTransaccion });
     } catch (err) {
         res.status(err.status || 500).json({ error: err.message });
     }
@@ -81,6 +86,17 @@ export const updateTransaccion = async (req, res) => {
         const updates = req.body; // Debe tener todos los campos necesarios
         const result = await updateTransaccionService(id, updates);
         res.json(result);
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+};
+
+// Listar todas (usuario)
+export const getTransaccionesUser = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const transacciones = await getTransaccionesUserService(userId);
+        res.json(transacciones);
     } catch (err) {
         res.status(err.status || 500).json({ error: err.message });
     }

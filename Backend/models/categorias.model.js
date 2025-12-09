@@ -43,12 +43,15 @@ export const getCategoriaById = async (id_categoria, id_usuario) => {
 };
 
 // Listar todas las categorías por tipo (devuelve predeterminadas y personalizadas del usuario)
-export const getCategoriasByTipo = async (tipo, id_usuario) => {
+export const getCategoriasUser = async (id_usuario) => {
   const query = `
     SELECT * FROM categorias
-    WHERE tipo = ?
-      AND (id_usuario = ? OR es_predeterminada = 1)
+    WHERE (id_usuario = ? OR es_predeterminada = 1)
   `;
-  const [rows] = await db.query(query, [tipo, id_usuario]);
+  const [rows] = await db.query(query, [id_usuario]);
   return rows;
 };
+
+
+
+

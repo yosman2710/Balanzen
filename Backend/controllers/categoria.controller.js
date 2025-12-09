@@ -3,13 +3,13 @@ import {
   deleteCategoriaService,
   getCategoriasByNameService,
   getCategoriaByIdService,
-  getCategoriasByTipoService
+  getCategoriasUserService,
 } from '../services/categoria.service.js';
 
 export const createCategoriaController = async (req, res) => {
   try {
     const { nombre_categoria, tipo, color, icon } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const id = await createCategoriaService(nombre_categoria, tipo, userId, color, icon);
     res.status(201).json({ id });
   } catch (err) {
@@ -20,7 +20,7 @@ export const createCategoriaController = async (req, res) => {
 export const deleteCategoriaController = async (req, res) => {
   try {
     const { id_categoria } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
     await deleteCategoriaService(id_categoria, userId);
     res.json({ message: 'Categoría eliminada correctamente' });
   } catch (err) {
@@ -31,7 +31,7 @@ export const deleteCategoriaController = async (req, res) => {
 export const getCategoriasByNameController = async (req, res) => {
   try {
     const { nombre } = req.query;
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const rows = await getCategoriasByNameService(nombre || '', userId);
     res.json(rows);
   } catch (err) {
@@ -42,7 +42,7 @@ export const getCategoriasByNameController = async (req, res) => {
 export const getCategoriaByIdController = async (req, res) => {
   try {
     const { id_categoria } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const cat = await getCategoriaByIdService(id_categoria, userId);
     if (!cat) return res.status(404).json({ error: 'No encontrada' });
     res.json(cat);
@@ -51,13 +51,13 @@ export const getCategoriaByIdController = async (req, res) => {
   }
 };
 
-export const getCategoriasByTipoController = async (req, res) => {
+export const getCategoriasUserController = async (req, res) => {
   try {
-    const { tipo } = req.query;
-    const userId = req.user.id;
-    const rows = await getCategoriasByTipoService(tipo, userId);
+    const userId = req.user.userId;
+    const rows = await getCategoriasUserService(userId);
     res.json(rows);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
+

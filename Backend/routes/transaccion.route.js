@@ -7,17 +7,20 @@ import {
     getTransaccionesByCategoriaNombre,
     getTransaccionesByCategoriaTipo,
     getTransaccionesByNombre,
-    updateTransaccion
+    updateTransaccion,
+    getTransaccionesUser
 } from '../controllers/transaccion.controller.js';
+import { verifyToken } from '../middleware/verifyToken.js';
 
 const router = express.Router();
 
-router.get('/:id', getTransaccionById);
-router.post('/', createTransaccion);
-router.delete('/:id', deleteTransaccion);
-router.get('/categoria', getTransaccionesByCategoriaNombre);   // ?nombre_categoria=
-router.get('/tipo', getTransaccionesByCategoriaTipo);         // ?tipo=
-router.get('/nombre', getTransaccionesByNombre);              // ?nombre_transaccion=
-router.put('/:id', updateTransaccion);
+router.get('/:id', verifyToken, getTransaccionById);
+router.post('/', verifyToken, createTransaccion);
+router.get('/', verifyToken, getTransaccionesUser);
+router.delete('/:id', verifyToken, deleteTransaccion);
+router.get('/categoria', verifyToken, getTransaccionesByCategoriaNombre);   // ?nombre_categoria=
+router.get('/tipo', verifyToken, getTransaccionesByCategoriaTipo);         // ?tipo=
+router.get('/nombre', verifyToken, getTransaccionesByNombre);              // ?nombre_transaccion=
+router.put('/:id', verifyToken, updateTransaccion);
 
 export default router;

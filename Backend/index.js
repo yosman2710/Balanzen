@@ -50,6 +50,8 @@ app.get('/', (req, res) => {
 });
 
 // Start Server
-app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Servidor corriendo en:`);
+  console.log(`- Local:   http://localhost:${port}`);
+  console.log(`- Network: http://192.168.1.101:${port} (Usar esta IP en el celular)`);
 });

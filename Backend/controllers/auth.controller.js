@@ -17,10 +17,10 @@ export const login = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { nombre, email, password, fecha_nacimiento, genero, pais } = req.body;
     // 👈 Asegúrate de estandarizar esto en el frontend también
     try {
-        const userId = await registerUserService(name, email, password);
+        const userId = await registerUserService(nombre, email, password, fecha_nacimiento, genero, pais);
         res.status(201).json({ message: "Usuario creado correctamente", userId });
     } catch (err) {
         res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor' });

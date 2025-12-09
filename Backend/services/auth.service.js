@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken';
 import md5 from 'md5';
 import { findUserByEmail, createUsuario } from '../models/usuarios.model.js';
 
-export const registerUserService = async (name, email, password) => {
-    if (!name || !email || !password) {
+export const registerUserService = async (nombre, email, password, fecha_nacimiento, genero, pais) => {
+    if (!nombre || !email || !password) {
         throw { status: 400, message: 'Todos los campos son requeridos' };
     }
 
@@ -13,7 +13,15 @@ export const registerUserService = async (name, email, password) => {
     }
 
     const hashedPassword = md5(password);
-    return await createUsuario(name, email, hashedPassword);
+
+    return await createUsuario({
+        nombre,
+        email,
+        password: hashedPassword,
+        fecha_nacimiento,
+        genero,
+        pais
+    });
 };
 
 export const loginUserService = async (email, password) => {
@@ -29,16 +37,17 @@ export const loginUserService = async (email, password) => {
     }
 
     const user = users[0];
+    const userId = user.id || user.id_usuario;
 
     const token = jwt.sign(
-        { userId: user.id, email: user.email },
+        { userId: userId, email: user.email },
         process.env.JWT_SECRET,
         { expiresIn: '2h' }
     );
 
     return {
-        id: user.id,
-        name: user.name,
+        id: userId,
+        nombre: user.nombre,
         email: user.email,
         token,
     };

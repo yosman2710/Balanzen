@@ -3,7 +3,7 @@ import {
   deleteCategoria,
   getCategoriasByName,
   getCategoriaById,
-  getCategoriasByTipo
+  getCategoriasUser,
 } from '../models/categorias.model.js';
 
 // Regla de negocio: no permitir duplicados personalizados para el mismo usuario
@@ -33,6 +33,7 @@ export const getCategoriaByIdService = async (id_categoria, id_usuario) =>
   await getCategoriaById(id_categoria, id_usuario);
 
 // Buscar por tipo: muestra predeterminadas y del usuario
-export const getCategoriasByTipoService = async (tipo, id_usuario) =>
-  await getCategoriasByTipo(tipo, id_usuario);
+export const getCategoriasUserService = async (id_usuario) =>
+  await getCategoriasUser(id_usuario);
+
 

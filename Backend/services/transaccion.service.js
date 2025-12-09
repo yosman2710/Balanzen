@@ -6,7 +6,8 @@ import {
     findTransaccionesByCategoriaNombre,
     findTransaccionesByCategoriaTipo,
     findTransaccionesByNombre,
-    updateTransaccion
+    updateTransaccion,
+    getTransaccionesUser
 } from '../models/transaccion.model.js';
 
 // Obtener transacción por ID
@@ -20,16 +21,16 @@ export const getTransaccionByIdService = async (id_transaccion) => {
 
 // Crear una transacción
 export const createTransaccionService = async (data) => {
-    // data debe incluir todos los campos requeridos: id_usuario, id_categoria, monto, fecha, descripcion, nombre_transaccion
-    return await createTransaccion(
-        data.id_usuario,
-        data.id_categoria,
-        data.monto,
-        data.fecha,
-        data.descripcion,
-        data.nombre_transaccion
-    );
+    return await createTransaccion({
+        id_usuario: data.id_usuario,
+        id_categoria: data.id_categoria,
+        nombre_transaccion: data.nombre_transaccion,
+        monto: data.monto,
+        fecha: data.fecha,
+        descripcion: data.descripcion,
+    });
 };
+
 
 // Eliminar una transacción por ID
 export const deleteTransaccionService = async (id_transaccion) => {
@@ -71,4 +72,8 @@ export const updateTransaccionService = async (id_transaccion, updates) => {
         throw { status: 404, message: "No se pudo actualizar la transacción: no encontrada" };
     }
     return { message: "Transacción actualizada correctamente" };
+};
+
+export const getTransaccionesUserService = async (id_usuario) => {
+    return await getTransaccionesUser(id_usuario);
 };

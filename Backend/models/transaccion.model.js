@@ -1,12 +1,12 @@
 import db from "../db.js";
 
 // Crear una transacción
-export const createTransaccion = async ({ id_usuario, id_categoria, monto, fecha, descripcion, nombre_transaccion }) => {
+export const createTransaccion = async ({ id_usuario, id_categoria, nombre_transaccion, monto, fecha, descripcion }) => {
   const query = `
-    INSERT INTO transacciones (id_usuario, id_categoria, monto, fecha, descripcion, nombre_transaccion)
+    INSERT INTO transacciones (id_usuario, id_categoria, nombre_transaccion, monto, fecha, descripcion)
     VALUES (?, ?, ?, ?, ?, ?)
   `;
-  const [result] = await db.query(query, [id_usuario, id_categoria, monto, fecha, descripcion, nombre_transaccion]);
+  const [result] = await db.query(query, [id_usuario, id_categoria, nombre_transaccion, monto, fecha, descripcion]);
   return result.insertId; // Devuelve el id de la nueva transacción
 };
 
@@ -64,6 +64,13 @@ export const updateTransaccion = async (id_transaccion, { id_usuario, id_categor
   const [result] = await db.query(query, [id_usuario, id_categoria, monto, fecha, descripcion, nombre_transaccion, id_transaccion]);
   return result.affectedRows > 0;
 };
+
+export const getTransaccionesUser = async (id_usuario) => {
+  const query = `SELECT t.id_transaccion, u.nombre, c.nombre_categoria, c.tipo, t.nombre_transaccion, t.monto, t.fecha, t.descripcion FROM transacciones t JOIN categorias c ON t.id_categoria = c.id_categoria JOIN usuarios u ON t.id_usuario = u.id_usuario WHERE t.id_usuario = ?`;
+  const [rows] = await db.query(query, [id_usuario]);
+  return rows;
+};
+
 
 
 
