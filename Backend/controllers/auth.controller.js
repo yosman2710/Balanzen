@@ -18,7 +18,6 @@ export const login = async (req, res) => {
 
 export const register = async (req, res) => {
     const { nombre, email, password, fecha_nacimiento, genero, pais } = req.body;
-    // 👈 Asegúrate de estandarizar esto en el frontend también
     try {
         const userId = await registerUserService(nombre, email, password, fecha_nacimiento, genero, pais);
         res.status(201).json({ message: "Usuario creado correctamente", userId });

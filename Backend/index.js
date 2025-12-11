@@ -35,15 +35,15 @@ async function testConnection() {
 testConnection();
 
 // Routes Registration
-app.use('/api/auth', authRoutes);
-app.use('/api/categorias', categoriaRoutes);
-app.use('/api/presupuestos', presupuestoRoutes);
-app.use('/api/transacciones', transaccionRoutes);
-app.use('/api/dashboard', datosDashboardRoutes);
-app.use('/api/budget', datosBudgetRoutes);
-app.use('/api/alertas', alertasRoutes);
-app.use('/api/contribuciones', contribucionesRoutes);
-app.use('/api/chatbot', chatbotRoutes);
+app.use('/auth', authRoutes);
+app.use('/categorias', categoriaRoutes);
+app.use('/presupuestos', presupuestoRoutes);
+app.use('/transacciones', transaccionRoutes);
+app.use('/dashboard', datosDashboardRoutes);
+app.use('/budget', datosBudgetRoutes);
+app.use('/alertas', alertasRoutes);
+app.use('/contribuciones', contribucionesRoutes);
+app.use('/chatbot', chatbotRoutes);
 
 app.get('/', (req, res) => {
   res.json({ mensaje: 'Backend de Balanzen funcionando correctamente 🚀' });

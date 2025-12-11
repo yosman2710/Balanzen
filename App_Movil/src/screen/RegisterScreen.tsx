@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from '../navegation/type';
 import { Picker } from '@react-native-picker/picker';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import { register } from '../api/auth';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -111,10 +112,22 @@ export function RegisterScreen() {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleRegister = () => {
-        if (validateForm()) {
-            // Aquí iría tu llamada a la API
+    const handleRegister = async () => {
+        if (Object.values(errors).some(Boolean)) return;
+        try {
+            const user = await register({
+                nombre: name,
+                email: email,
+                password: password,
+                fecha_nacimiento: birthdate,
+                genero: gender,
+                pais: country,
+            });
+            console.log("Usuario registrado:", user);
             setModalVisible(true);
+            navigation.navigate('Login');
+        } catch (error) {
+            console.error("Error al registrar usuario:", error);
         }
     };
 

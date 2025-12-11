@@ -49,7 +49,7 @@ export const loginUserService = async (email, password) => {
         id: userId,
         nombre: user.nombre,
         email: user.email,
-        token,
+        token: token,
     };
 };
 
