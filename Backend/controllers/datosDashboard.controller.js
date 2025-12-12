@@ -2,7 +2,7 @@ import { fetchDashboardData } from '../services/datosDashboard.service.js';
 
 export const getDashboardData = async (req, res) => {
   try {
-    const userId = req.user.id; // Asumiendo token o middleware lo llena
+    const userId = req.user.userId;
     const data = await fetchDashboardData(userId);
     res.json(data);
   } catch (error) {

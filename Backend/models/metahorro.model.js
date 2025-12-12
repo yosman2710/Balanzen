@@ -1,25 +1,25 @@
-import db from "../db";
+import db from "../db.js";
 // Crear meta de ahorro
-export const createMetaAhorro = async ({ id_usuario, nombre_meta, descripcion_meta, monto, fecha_inicio, fecha_finalizacion }) => {
+export const createMetaAhorro = async (id_usuario, nombre_meta, descripcion_meta, monto_objetivo) => {
   const query = `
-    INSERT INTO meta_ahorro (id_usuario, nombre_meta, descripcion_meta, monto, fecha_inicio, fecha_finalizacion)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO meta_ahorro (id_usuario, nombre_meta, descripcion_meta, monto_actual, monto_objetivo, fecha_creacion)
+    VALUES (?, ?, ?, ?, ?, NOW())
   `;
-  const [result] = await db.query(query, [id_usuario, nombre_meta, descripcion_meta, monto, fecha_inicio, fecha_finalizacion]);
+  const [result] = await db.query(query, [id_usuario, nombre_meta, descripcion_meta, 0, monto_objetivo]);
   return result.insertId;
 };
 
 // Eliminar meta de ahorro por id
-export const deleteMetaAhorro = async (id_meta) => {
-  const query = `DELETE FROM meta_ahorro WHERE id_meta = ?`;
-  const [result] = await db.query(query, [id_meta]);
+export const deleteMetaAhorro = async (id_usuario, id_meta) => {
+  const query = `DELETE FROM meta_ahorro WHERE id_meta = ? AND id_usuario = ?`;
+  const [result] = await db.query(query, [id_meta, id_usuario]);
   return result.affectedRows > 0;
 };
 
 // Buscar meta de ahorro por id
-export const findMetaAhorroById = async (id_meta) => {
-  const query = `SELECT * FROM meta_ahorro WHERE id_meta = ?`;
-  const [rows] = await db.query(query, [id_meta]);
+export const findMetaAhorroById = async (id_usuario, id_meta) => {
+  const query = `SELECT * FROM meta_ahorro WHERE id_meta = ? AND id_usuario = ?`;
+  const [rows] = await db.query(query, [id_meta, id_usuario]);
   return rows[0];
 };
 
@@ -31,11 +31,32 @@ export const findMetasAhorroByUsuario = async (id_usuario) => {
 };
 
 // Actualizar meta de ahorro por id
-export const updateMetaAhorro = async (id_meta, { nombre_meta, descripcion_meta, monto, fecha_inicio, fecha_finalizacion }) => {
+export const updateMetaAhorro = async (id_usuario, id_meta, { nombre_meta, descripcion_meta, monto_actual, monto_objetivo }) => {
   const query = `
-    UPDATE meta_ahorro SET nombre_meta = ?, descripcion_meta = ?, monto = ?, fecha_inicio = ?, fecha_finalizacion = ?
-    WHERE id_meta = ?
+    UPDATE meta_ahorro SET nombre_meta = ?, descripcion_meta = ?, monto_actual = ?, monto_objetivo = ?
+    WHERE id_meta = ? AND id_usuario = ?
   `;
-  const [result] = await db.query(query, [nombre_meta, descripcion_meta, monto, fecha_inicio, fecha_finalizacion, id_meta]);
+  const [result] = await db.query(query, [nombre_meta, descripcion_meta, monto_actual, monto_objetivo, id_meta, id_usuario]);
   return result.affectedRows > 0;
+};
+
+
+export const getMetaAhorroDashboard = async (id_usuario) => {
+  const query = `
+    SELECT nombre_meta, monto_actual, monto_objetivo, fecha_creacion
+    FROM meta_ahorro
+    WHERE id_usuario = ?
+    ORDER BY fecha_creacion DESC
+    LIMIT 1;
+  `;
+  const [rows] = await db.query(query, [id_usuario]);
+  if (!rows.length) return null;
+
+  const meta = rows[0];
+  return {
+    name: meta.nombre_meta,
+    current: meta.monto_actual,
+    target: meta.monto_objetivo,
+    createdAt: meta.fecha_creacion,
+  };
 };
