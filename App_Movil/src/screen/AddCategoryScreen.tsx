@@ -14,6 +14,7 @@ import {
     Smartphone, Shirt, Film, Dumbbell, Gift, Plane, Utensils, Fuel, Wrench,
 } from 'lucide-react-native';
 import { styles } from '../styles/AddCategory.style';
+import { createCategory } from '../api/categories';
 
 interface AddCategoryScreenProps {
     onClose: () => void;
@@ -76,18 +77,23 @@ export const AddCategoryScreen: React.FC<AddCategoryScreenProps> = ({
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (validateForm()) {
-            onAddCategory({
-                name: name.trim(),
-                icon: selectedIcon,
-                color: selectedColor,
-                type,
-            });
-            console.log('✅ ¡Categoría creada!', name);
-            onClose();
+            try {
+                const newCategory = await createCategory({
+                    name: name.trim(),
+                    icon: selectedIcon,
+                    color: selectedColor,
+                    type,
+                });
+                console.log('✅ ¡Categoría creada!', newCategory);
+                onAddCategory(newCategory);
+                onClose();
+            } catch (error) {
+                console.error('❌ Error al crear la categoría:', error);
+            }
         }
-    };
+    }
 
     const typeLabels = { income: 'Ingreso', expense: 'Gasto' };
 

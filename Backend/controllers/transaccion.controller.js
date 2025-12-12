@@ -4,6 +4,7 @@ import {
     createTransaccionService,
     deleteTransaccionService,
     getTransaccionesByCategoriaNombreService,
+    getTransaccionesByCategoriaIdService,
     getTransaccionesByCategoriaTipoService,
     getTransaccionesByNombreService,
     updateTransaccionService,
@@ -41,6 +42,17 @@ export const deleteTransaccion = async (req, res) => {
         const { id } = req.params;
         const result = await deleteTransaccionService(id);
         res.json(result);
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+};
+
+// Buscar transacciones por ID de categoría
+export const getTransaccionesByCategoriaId = async (req, res) => {
+    try {
+        const { id_categoria } = req.params;
+        const transacciones = await getTransaccionesByCategoriaIdService(id_categoria);
+        res.json(transacciones);
     } catch (err) {
         res.status(err.status || 500).json({ error: err.message });
     }

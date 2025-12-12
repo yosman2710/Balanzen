@@ -24,7 +24,7 @@ interface Category {
     name: string;
     icon: string;
     color: string;
-    type: 'income' | 'expense' | 'both';
+    type: 'income' | 'expense';
 }
 
 interface Budget {
@@ -55,7 +55,7 @@ export const AddBudgetScreen: React.FC<AddBudgetScreenProps> = ({
 
     // Filtrar solo categorías de gastos
     const expenseCategories = categories.filter(
-        cat => cat.type === 'expense' || cat.type === 'both'
+        cat => cat.type === 'expense'
     );
 
     const selectedCategory = categories.find(c => c.id === categoryId);

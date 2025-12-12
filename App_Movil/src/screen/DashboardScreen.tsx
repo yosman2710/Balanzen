@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     View,
     ScrollView,
     Text,
     Dimensions,
+    ActivityIndicator,
 } from 'react-native';
 import {
     TrendingUp,
@@ -20,6 +21,7 @@ import { BalanceCard } from '../component/BalanceCard';
 import { SavingsGoalCard } from '../component/SavingsGoalCard';
 import { RecentTransactions } from '../component/RecentTransactions';
 import { styles } from '../styles/dashboard.style';
+import { api } from '../api/client'; // 👈 tu cliente axios con interceptor
 
 interface Transaction {
     id: string;
@@ -29,74 +31,58 @@ interface Transaction {
     category: string;
     date: string;
 }
+
 interface DashboardProps {
     onAddIncome: () => void;
     onAddExpense: () => void;
 }
 
 export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
-    const [showMenu, setShowMenu] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    const [monthIncome, setMonthIncome] = useState(0);
+    const [monthExpenses, setMonthExpenses] = useState(0);
+    const [incomeChange, setIncomeChange] = useState(0);
+    const [expenseChange, setExpenseChange] = useState(0);
+    const [savingsGoal, setSavingsGoal] = useState<any>(null);
+    const [monthlyData, setMonthlyData] = useState<any>({
+        labels: [],
+        datasets: [{ data: [] }],
+    });
+    const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
 
     const currentMonth = new Date().toLocaleDateString('es-ES', { month: 'long' });
-    const monthIncome = 5200.00;
-    const monthExpenses = 3180.50;
+
+    useEffect(() => {
+        const fetchDashboard = async () => {
+            try {
+                const { data } = await api.get('/dashboard/resumen'); // 👈 backend endpoint
+                setMonthIncome(data.ingresosMes);
+                setMonthExpenses(data.gastosMes);
+                setIncomeChange(data.incomeChange || 0);
+                setExpenseChange(data.expenseChange || 0);
+                setSavingsGoal(data.meta);
+
+                setMonthlyData({
+                    labels: data.monthly.map((m: any) => m.mes),
+                    datasets: [{ data: data.monthly.map((m: any) => m.ingresos - m.gastos) }],
+                });
+
+                setRecentTransactions(data.recent);
+            } catch (err: any) {
+                setError(err?.response?.data?.error || 'Error cargando dashboard');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchDashboard();
+    }, []);
+
     const monthBalance = monthIncome - monthExpenses;
-    const incomeChange = 8;
-    const expenseChange = -5;
 
-    const savingsGoal = {
-        name: 'Vacaciones de verano',
-        current: 4270.30,
-        target: 8000.00,
-        percentage: (4270.30 / 8000.00) * 100,
-    };
-
-    const chartConfig = {
-        backgroundGradientFrom: '#ffffff',
-        backgroundGradientTo: '#ffffff',
-        color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`,
-        strokeWidth: 3,
-        barPercentage: 0.5,
-    };
-
-    const monthlyData = {
-        labels: ['Jul', 'Ago', 'Sep', 'Oct', 'Nov'],
-        datasets: [{ data: [1850, 1920, 1780, 2100, 2020] }],
-    };
-
-    const recentTransactions: Transaction[] = [
-        {
-            id: '1',
-            type: 'income',
-            description: 'Salario mensual',
-            amount: 5200.00,
-            category: 'Trabajo',
-            date: '2025-11-20',
-        },
-        {
-            id: '2',
-            type: 'expense',
-            description: 'Supermercado',
-            amount: 120.50,
-            category: 'Alimentación',
-            date: '2025-11-19',
-        },
-        {
-            id: '3',
-            type: 'expense',
-            description: 'Netflix',
-            amount: 12.99,
-            category: 'Entretenimiento',
-            date: '2025-11-18',
-        },
-    ];
-
-    const renderTransactionIcon = (type: string) => {
-        if (type === 'income') {
-            return <TrendingUp color="#10b981" size={20} />;
-        }
-        return <ArrowDownRight color="#ef4444" size={20} />;
-    };
+    if (loading) return <ActivityIndicator size="large" color="#047857" />;
+    if (error) return <Text style={{ color: 'red' }}>{error}</Text>;
 
     return (
         <SafeAreaView style={styles.container}>
@@ -114,7 +100,7 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
                     />
                     <BalanceCard
                         amount={monthBalance}
-                        percentage={((monthBalance / monthIncome) * 100)}
+                        percentage={monthIncome ? ((monthBalance / monthIncome) * 100) : 0}
                     />
                 </View>
 
@@ -137,7 +123,7 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
                 </View>
 
                 {/* Meta de ahorro */}
-                <SavingsGoalCard goal={savingsGoal} />
+                {savingsGoal && <SavingsGoalCard goal={savingsGoal} />}
 
                 {/* Gráfica */}
                 <Card style={styles.chartCard}>
@@ -149,7 +135,13 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
                         data={monthlyData}
                         width={Dimensions.get('window').width - 48}
                         height={200}
-                        chartConfig={chartConfig}
+                        chartConfig={{
+                            backgroundGradientFrom: '#ffffff',
+                            backgroundGradientTo: '#ffffff',
+                            color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`,
+                            strokeWidth: 3,
+                            barPercentage: 0.5,
+                        }}
                         bezier
                         style={styles.chart}
                     />

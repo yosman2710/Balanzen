@@ -4,6 +4,7 @@ import {
     deleteTransaccion,
     findTransaccionById,
     findTransaccionesByCategoriaNombre,
+    findTransaccionesByCategoriaId,
     findTransaccionesByCategoriaTipo,
     findTransaccionesByNombre,
     updateTransaccion,
@@ -44,6 +45,11 @@ export const deleteTransaccionService = async (id_transaccion) => {
 // Buscar transacciones por nombre de categoría
 export const getTransaccionesByCategoriaNombreService = async (nombre_categoria) => {
     return await findTransaccionesByCategoriaNombre(nombre_categoria);
+};
+
+// Buscar transacciones por ID de categoría
+export const getTransaccionesByCategoriaIdService = async (id_categoria) => {
+    return await findTransaccionesByCategoriaId(id_categoria);
 };
 
 // Buscar transacciones por tipo de categoría

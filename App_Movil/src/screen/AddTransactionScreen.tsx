@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -7,6 +7,8 @@ import {
     TouchableOpacity,
     Modal,
     Pressable,
+    ActivityIndicator,
+    Alert
 } from 'react-native';
 import {
     ArrowLeft,
@@ -17,36 +19,12 @@ import {
 } from 'lucide-react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { styles } from '../styles/AddTransactionScreen.style';
+import { getCategories, type CategoryDTO } from '../api/categories';
+import { createTransaction } from '../api/transacciones';
 
 type TransactionType = 'income' | 'expense';
 
-interface Category {
-    id: string;
-    name: string;
-    icon: string;
-    color: string;
-    type: 'income' | 'expense' | 'both';
-    isDefault: boolean;
-}
-
-interface Transaction {
-    type: TransactionType;
-    amount: number;
-    description: string;
-    categoryId: string;
-    date: string;
-    notes?: string;
-}
-
-interface AddTransactionScreenProps {
-    categories: Category[];
-    onAddTransaction: (transaction: Transaction) => void;
-}
-
-export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({
-    categories,
-    onAddTransaction,
-}) => {
+export const AddTransactionScreen: React.FC = () => {
     const navigation = useNavigation<any>();
     const route = useRoute<any>();
 
@@ -54,15 +32,36 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({
 
     const [type, setType] = useState<TransactionType>(defaultType);
     const [amount, setAmount] = useState('');
-    const [description, setDescription] = useState('');
+    const [description, setDescription] = useState(''); // nombre_transaccion
+    const [notes, setNotes] = useState(''); // descripcion opcional
     const [categoryId, setCategoryId] = useState('');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-    const [notes, setNotes] = useState('');
+
+    const [categories, setCategories] = useState<CategoryDTO[]>([]);
+    const [loadingCategories, setLoadingCategories] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [categoryModalVisible, setCategoryModalVisible] = useState(false);
 
+    useEffect(() => {
+        const loadCats = async () => {
+            try {
+                setLoadingCategories(true);
+                const data = await getCategories();
+                setCategories(data);
+            } catch (e) {
+                console.error("Error loading categories", e);
+                Alert.alert("Error", "No se pudieron cargar las categorías");
+            } finally {
+                setLoadingCategories(false);
+            }
+        };
+        loadCats();
+    }, []);
+
     const filteredCategories = categories.filter(
-        cat => cat.type === type || cat.type === 'both',
+        cat => cat.type === type,
     );
 
     const validateForm = () => {
@@ -73,7 +72,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({
         }
 
         if (!description.trim()) {
-            newErrors.description = 'La descripción es requerida';
+            newErrors.description = 'El nombre es requerido';
         }
 
         if (!categoryId) {
@@ -88,25 +87,32 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!validateForm()) return;
 
-        const transaction: Transaction = {
-            type,
-            amount: parseFloat(amount),
-            description: description.trim(),
-            categoryId,
-            date,
-            notes: notes.trim() || undefined,
-        };
+        try {
+            setSubmitting(true);
+            const payload = {
+                id_categoria: categoryId,
+                nombre_transaccion: description.trim(),
+                monto: parseFloat(amount),
+                fecha: date,
+                descripcion: notes.trim()
+            };
 
-        onAddTransaction(transaction);
-        navigation.goBack(); // vuelve al dashboard
+            await createTransaction(payload);
+
+            // Éxito
+            navigation.goBack();
+        } catch (e) {
+            console.error(e);
+            Alert.alert("Error", "No se pudo guardar la transacción");
+        } finally {
+            setSubmitting(false);
+        }
     };
 
-
-
-    const selectedCategory = filteredCategories.find(c => c.id === categoryId);
+    const selectedCategory = categories.find(c => c.id === categoryId);
 
     return (
         <View style={styles.container}>
@@ -136,7 +142,10 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({
                     <Text style={styles.label}>Tipo</Text>
                     <View style={styles.tabsRow}>
                         <TouchableOpacity
-                            onPress={() => setType('income')}
+                            onPress={() => {
+                                setType('income');
+                                setCategoryId(''); // Resetear categoría al cambiar tipo
+                            }}
                             style={[
                                 styles.tab,
                                 type === 'income' && styles.tabActiveIncome,
@@ -152,7 +161,10 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => setType('expense')}
+                            onPress={() => {
+                                setType('expense');
+                                setCategoryId('');
+                            }}
                             style={[
                                 styles.tab,
                                 type === 'expense' && styles.tabActiveExpense,
@@ -192,9 +204,9 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({
                     {errors.amount && <Text style={styles.errorText}>{errors.amount}</Text>}
                 </View>
 
-                {/* Descripción */}
+                {/* Descripción (Nombre Transacción) */}
                 <View style={styles.field}>
-                    <Text style={styles.label}>Descripción</Text>
+                    <Text style={styles.label}>Nombre Transacción</Text>
                     <View style={styles.inputWrapper}>
                         <FileText
                             size={18}
@@ -234,17 +246,21 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({
                     >
                         <Tag size={18} color="#94a3b8" style={styles.inputIcon} />
                         <View style={styles.selectContent}>
-                            <Text
-                                style={
-                                    selectedCategory
-                                        ? styles.selectText
-                                        : styles.selectPlaceholder
-                                }
-                            >
-                                {selectedCategory
-                                    ? selectedCategory.name
-                                    : 'Selecciona una categoría'}
-                            </Text>
+                            {loadingCategories ? (
+                                <ActivityIndicator size="small" color="#94a3b8" />
+                            ) : (
+                                <Text
+                                    style={
+                                        selectedCategory
+                                            ? styles.selectText
+                                            : styles.selectPlaceholder
+                                    }
+                                >
+                                    {selectedCategory
+                                        ? selectedCategory.name
+                                        : 'Selecciona una categoría'}
+                                </Text>
+                            )}
                         </View>
                     </TouchableOpacity>
                     {errors.categoryId && (
@@ -291,6 +307,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({
                         onPress={() => navigation.goBack()}
                         style={[styles.button, styles.buttonOutline]}
                         activeOpacity={0.85}
+                        disabled={submitting}
                     >
                         <Text style={styles.buttonOutlineText}>Cancelar</Text>
                     </TouchableOpacity>
@@ -299,10 +316,16 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({
                         style={[
                             styles.button,
                             type === 'income' ? styles.buttonIncome : styles.buttonExpense,
+                            submitting && { opacity: 0.7 }
                         ]}
                         activeOpacity={0.85}
+                        disabled={submitting}
                     >
-                        <Text style={styles.buttonPrimaryText}>Guardar</Text>
+                        {submitting ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <Text style={styles.buttonPrimaryText}>Guardar</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -320,19 +343,33 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({
                 >
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Selecciona una categoría</Text>
-                        {filteredCategories.map(cat => (
-                            <TouchableOpacity
-                                key={cat.id}
-                                onPress={() => {
-                                    setCategoryId(cat.id);
-                                    setCategoryModalVisible(false);
-                                }}
-                                style={styles.modalItem}
-                            >
-                                <View style={[styles.modalDot, { backgroundColor: cat.color }]} />
-                                <Text style={styles.modalItemText}>{cat.name}</Text>
-                            </TouchableOpacity>
-                        ))}
+                        <ScrollView style={{ maxHeight: 300 }}>
+                            {filteredCategories.length === 0 ? (
+                                <Text style={{ textAlign: 'center', color: '#666', padding: 20 }}>
+                                    No hay categorías disponibles para {type === 'income' ? 'ingresos' : 'gastos'}.
+                                </Text>
+                            ) : (
+                                filteredCategories.map(cat => (
+                                    <TouchableOpacity
+                                        key={cat.id}
+                                        onPress={() => {
+                                            setCategoryId(cat.id);
+                                            setCategoryModalVisible(false);
+                                        }}
+                                        style={styles.modalItem}
+                                    >
+                                        <View style={[styles.modalDot, { backgroundColor: cat.color }]} />
+                                        <Text style={styles.modalItemText}>{cat.name}</Text>
+                                    </TouchableOpacity>
+                                ))
+                            )}
+                        </ScrollView>
+                        <TouchableOpacity
+                            style={[styles.modalItem, { justifyContent: 'center', borderTopWidth: 1, borderColor: '#eee' }]}
+                            onPress={() => setCategoryModalVisible(false)}
+                        >
+                            <Text style={{ color: '#666' }}>Cerrar</Text>
+                        </TouchableOpacity>
                     </View>
                 </Pressable>
             </Modal>

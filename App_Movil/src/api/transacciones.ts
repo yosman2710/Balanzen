@@ -13,6 +13,16 @@ export const crearTransaccion = async (payload: NuevaTransaccion) => {
     return data; // { id: number }
 };
 
+export const getTransactionsByCategory = async (categoryId: string) => {
+    const { data } = await api.get(`/transacciones/categoria/${categoryId}`);
+    return data;
+};
+
+export const createTransaction = async (transaction: any) => {
+    const { data } = await api.post("/transacciones", transaction);
+    return data;
+};
+
 export const listarTransacciones = async () => {
     const { data } = await api.get("/transacciones");
     return data; // Ajusta al shape de tu API
