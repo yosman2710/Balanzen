@@ -5,27 +5,30 @@ import {
   getIngresosMesAnterior,
   getGastosMesAnterior,
   getMonthlyIncomeExpenses,
-  getRecentTransactions
+  getRecentTransactions,
+  getMetaAhorroReciente
 } from '../models/cargarDatosDashboard.models.js';
 
 export const fetchDashboardData = async (userId) => {
   try {
-    const ingresosActual = await getIngresosMesActual(userId);
-    const gastosActual = await getGastosMesActual(userId);
-    const presupuestoActual = await getPresupuestoMesActual(userId);
+    const ingresosMes = await getIngresosMesActual(userId);
+    const gastosMes = await getGastosMesActual(userId);
+    const presupuestoMes = await getPresupuestoMesActual(userId);
     const ingresosAnterior = await getIngresosMesAnterior(userId);
     const gastosAnterior = await getGastosMesAnterior(userId);
-    const monthlyData = await getMonthlyIncomeExpenses(userId);
-    const recentTrans = await getRecentTransactions(userId);
+    const monthly = await getMonthlyIncomeExpenses(userId);
+    const recent = await getRecentTransactions(userId);
+    const meta = await getMetaAhorroReciente(userId);
 
     return {
-      ingresosActual,
-      gastosActual,
-      presupuestoActual,
+      ingresosMes,
+      gastosMes,
+      presupuestoMes,
       ingresosAnterior,
       gastosAnterior,
-      monthlyData,
-      recentTrans
+      monthly,
+      recent,
+      meta
     };
   } catch (error) {
     throw new Error(`Error fetching dashboard data: ${error.message}`);

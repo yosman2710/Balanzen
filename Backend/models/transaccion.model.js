@@ -36,6 +36,18 @@ export const findTransaccionesByCategoriaNombre = async (nombre_categoria) => {
   return rows;
 };
 
+// Buscar transacciones por ID de categoría
+export const findTransaccionesByCategoriaId = async (id_categoria) => {
+  const query = `
+    SELECT *
+    FROM transacciones
+    WHERE id_categoria = ?
+    ORDER BY fecha DESC
+  `;
+  const [rows] = await db.query(query, [id_categoria]);
+  return rows;
+};
+
 // Buscar transacciones por tipo de categoría (ingreso/gasto)
 export const findTransaccionesByCategoriaTipo = async (tipo) => {
   const query = `

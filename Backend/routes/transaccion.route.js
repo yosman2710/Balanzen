@@ -5,6 +5,7 @@ import {
     createTransaccion,
     deleteTransaccion,
     getTransaccionesByCategoriaNombre,
+    getTransaccionesByCategoriaId,
     getTransaccionesByCategoriaTipo,
     getTransaccionesByNombre,
     updateTransaccion,
@@ -18,6 +19,7 @@ router.get('/:id', verifyToken, getTransaccionById);
 router.post('/', verifyToken, createTransaccion);
 router.get('/', verifyToken, getTransaccionesUser);
 router.delete('/:id', verifyToken, deleteTransaccion);
+router.get('/categoria/:id_categoria', verifyToken, getTransaccionesByCategoriaId);
 router.get('/categoria', verifyToken, getTransaccionesByCategoriaNombre);   // ?nombre_categoria=
 router.get('/tipo', verifyToken, getTransaccionesByCategoriaTipo);         // ?tipo=
 router.get('/nombre', verifyToken, getTransaccionesByNombre);              // ?nombre_transaccion=

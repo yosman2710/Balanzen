@@ -63,6 +63,28 @@ export const getGastosMesAnterior = async (userId) => {
   return rows[0].gastos_mes_anterior;
 };
 
+export const getMetaAhorroReciente = async (userId) => {
+  const query = `
+    SELECT id_meta, nombre_meta, monto_actual, monto_objetivo, fecha_creacion
+    FROM meta_ahorro
+    WHERE id_usuario = ?
+    ORDER BY fecha_creacion DESC
+    LIMIT 1;
+  `;
+  const [rows] = await db.query(query, [userId]);
+  if (!rows.length) return null;
+
+  const meta = rows[0];
+  return {
+    id: meta.id_meta,
+    name: meta.nombre_meta,
+    current: meta.monto_actual,
+    target: meta.monto_objetivo,
+    percentage: (meta.monto_actual / meta.monto_objetivo) * 100,
+    createdAt: meta.fecha_creacion,
+  };
+};
+
 
 
 
