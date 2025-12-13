@@ -2,7 +2,7 @@ import { fetchBudgetsWithProgressService } from '../services/datosbudget.service
 
 export const getBudgetsWithProgressController = async (req, res) => {
   try {
-    const userId = req.user.id; // Asumiendo auth con middleware
+    const userId = req.user.userId; // Asumiendo auth con middleware
     const budgets = await fetchBudgetsWithProgressService(userId);
     res.json(budgets);
   } catch (err) {

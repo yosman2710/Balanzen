@@ -81,5 +81,18 @@ export const updateTransaccionService = async (id_transaccion, updates) => {
 };
 
 export const getTransaccionesUserService = async (id_usuario) => {
-    return await getTransaccionesUser(id_usuario);
+    const transactions = await getTransaccionesUser(id_usuario);
+    return transactions.map(transaction => {
+        const fecha = new Date(transaction.fecha);
+        return {
+            id: transaction.id_transaccion,
+            type: transaction.tipo,
+            description: transaction.nombre_transaccion,
+            amount: Number(transaction.monto),
+            category: transaction.nombre_categoria,
+            date: fecha.toISOString().split('T')[0],
+            icon: transaction.icon,
+        };
+
+    });
 };

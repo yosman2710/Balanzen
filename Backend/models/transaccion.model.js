@@ -77,11 +77,15 @@ export const updateTransaccion = async (id_transaccion, { id_usuario, id_categor
   return result.affectedRows > 0;
 };
 
+
+
 export const getTransaccionesUser = async (id_usuario) => {
-  const query = `SELECT t.id_transaccion, u.nombre, c.nombre_categoria, c.tipo, t.nombre_transaccion, t.monto, t.fecha, t.descripcion FROM transacciones t JOIN categorias c ON t.id_categoria = c.id_categoria JOIN usuarios u ON t.id_usuario = u.id_usuario WHERE t.id_usuario = ?`;
+  const query = `SELECT t.id_transaccion, c.tipo, t.nombre_transaccion, t.monto, c.nombre_categoria, t.fecha, c.icon FROM transacciones t JOIN categorias c ON t.id_categoria = c.id_categoria WHERE t.id_usuario = ? ORDER BY t.fecha DESC
+`;
   const [rows] = await db.query(query, [id_usuario]);
   return rows;
 };
+
 
 
 

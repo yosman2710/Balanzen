@@ -61,7 +61,7 @@ export interface BudgetProgressDTO {
 }
 
 export const getBudgetsWithProgress = async () => {
-    const { data } = await api.get("/budget/current");
+    const { data } = await api.get("/budget");
     return data;
 };
 

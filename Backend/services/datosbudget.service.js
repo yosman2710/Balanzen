@@ -7,11 +7,14 @@ export const fetchBudgetsWithProgressService = async (userId) => {
     const usedPercent = budget.limit > 0 ? Math.round((budget.spent / budget.limit) * 100) : 0;
     return {
       id: budget.id,
+      categoryId: budget.categoryId,
       category: budget.category,
-      limit: budget.limit,
-      spent: budget.spent,
+      icon: budget.icon,
+      color: budget.color,
+      limit: Number(budget.limit),
+      spent: Number(budget.spent),
       usedPercent,
-      remaining: budget.limit - budget.spent
+      remaining: Number(budget.limit) - Number(budget.spent)
     };
   });
 };

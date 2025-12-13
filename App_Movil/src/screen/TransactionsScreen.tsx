@@ -1,24 +1,21 @@
-import React, { JSX, useState } from 'react';
+import React, { JSX, useCallback, useState } from 'react';
 import {
     View,
     Text,
     ScrollView,
     TextInput,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import {
     Search,
-    TrendingUp,
-    ShoppingCart,
-    Home,
-    Coffee,
-    Car,
-    Zap,
 } from 'lucide-react-native';
 import { Card } from '../component/ui/Card';
 import { Button } from '../component/ui/Button';
 import { styles } from '../styles/Transactions.style';
+import { listarTransacciones } from '../api/transacciones';
+import { IconByName } from '../component/IconMapper';
 
-type TransactionType = 'income' | 'expense';
+type TransactionType = 'ingreso' | 'gasto';
 
 interface Transaction {
     id: string;
@@ -27,106 +24,29 @@ interface Transaction {
     amount: number;
     category: string;
     date: string; // ISO
-    icon: JSX.Element;
+    icon: string;
 }
 
 export function TransactionsScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState<TransactionType | 'all'>('all');
+    const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
 
     // Datos simulados
-    const allTransactions: Transaction[] = [
-        {
-            id: '1',
-            type: 'income',
-            description: 'Salario mensual',
-            amount: 5200.0,
-            category: 'Trabajo',
-            date: '2025-11-20',
-            icon: <TrendingUp size={20} />,
-        },
-        {
-            id: '2',
-            type: 'expense',
-            description: 'Supermercado Walmart',
-            amount: 120.5,
-            category: 'Alimentación',
-            date: '2025-11-19',
-            icon: <ShoppingCart size={20} />,
-        },
-        {
-            id: '3',
-            type: 'expense',
-            description: 'Renta del mes',
-            amount: 800.0,
-            category: 'Vivienda',
-            date: '2025-11-18',
-            icon: <Home size={20} />,
-        },
-        {
-            id: '4',
-            type: 'expense',
-            description: 'Netflix',
-            amount: 12.99,
-            category: 'Entretenimiento',
-            date: '2025-11-18',
-            icon: <Coffee size={20} />,
-        },
-        {
-            id: '5',
-            type: 'income',
-            description: 'Freelance diseño web',
-            amount: 450.0,
-            category: 'Trabajo',
-            date: '2025-11-17',
-            icon: <TrendingUp size={20} />,
-        },
-        {
-            id: '6',
-            type: 'expense',
-            description: 'Gasolina',
-            amount: 60.0,
-            category: 'Transporte',
-            date: '2025-11-16',
-            icon: <Car size={20} />,
-        },
-        {
-            id: '7',
-            type: 'expense',
-            description: 'Luz y agua',
-            amount: 85.0,
-            category: 'Servicios',
-            date: '2025-11-15',
-            icon: <Zap size={20} />,
-        },
-        {
-            id: '8',
-            type: 'expense',
-            description: 'Restaurante',
-            amount: 45.0,
-            category: 'Alimentación',
-            date: '2025-11-15',
-            icon: <Coffee size={20} />,
-        },
-        {
-            id: '9',
-            type: 'expense',
-            description: 'Supermercado Soriana',
-            amount: 95.3,
-            category: 'Alimentación',
-            date: '2025-11-14',
-            icon: <ShoppingCart size={20} />,
-        },
-        {
-            id: '10',
-            type: 'expense',
-            description: 'Uber',
-            amount: 18.5,
-            category: 'Transporte',
-            date: '2025-11-13',
-            icon: <Car size={20} />,
-        },
-    ];
+    const loadAllTransactions = async () => {
+        try {
+            const data = await listarTransacciones();
+            setAllTransactions(data);
+        } catch (error) {
+            console.error('Error al cargar transacciones:', error);
+        }
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            loadAllTransactions();
+        }, [])
+    );
 
     const filteredTransactions = allTransactions.filter((t) => {
         const q = searchQuery.toLowerCase();
@@ -139,11 +59,11 @@ export function TransactionsScreen() {
     });
 
     const totalIncome = allTransactions
-        .filter((t) => t.type === 'income')
+        .filter((t) => t.type === 'ingreso')
         .reduce((sum, t) => sum + t.amount, 0);
 
     const totalExpense = allTransactions
-        .filter((t) => t.type === 'expense')
+        .filter((t) => t.type === 'gasto')
         .reduce((sum, t) => sum + t.amount, 0);
 
     // Agrupar por fecha formateada
@@ -211,13 +131,13 @@ export function TransactionsScreen() {
                         />
                         <FilterChip
                             label="Ingresos"
-                            active={activeFilter === 'income'}
-                            onPress={() => setActiveFilter('income')}
+                            active={activeFilter === 'ingreso'}
+                            onPress={() => setActiveFilter('ingreso')}
                         />
                         <FilterChip
                             label="Gastos"
-                            active={activeFilter === 'expense'}
-                            onPress={() => setActiveFilter('expense')}
+                            active={activeFilter === 'gasto'}
+                            onPress={() => setActiveFilter('gasto')}
                         />
                     </View>
                 </View>
@@ -230,7 +150,7 @@ export function TransactionsScreen() {
                                 <Text style={styles.dateLabel}>{date}</Text>
 
                                 {txs.map((t) => {
-                                    const isIncome = t.type === 'income';
+                                    const isIncome = t.type === 'ingreso';
                                     return (
                                         <Card key={t.id} style={styles.txCard}>
                                             <View style={styles.txRow}>
@@ -243,10 +163,11 @@ export function TransactionsScreen() {
                                                                 : styles.txIconExpenseBg,
                                                         ]}
                                                     >
-                                                        {React.cloneElement(t.icon, {
-                                                            color: isIncome ? '#16a34a' : '#dc2626',
-                                                            size: 20,
-                                                        })}
+                                                        <IconByName
+                                                            name={t.icon}
+                                                            color={isIncome ? '#16a34a' : '#dc2626'}
+                                                            size={20}
+                                                        />
                                                     </View>
                                                     <View>
                                                         <Text style={styles.txDescription}>

@@ -4,6 +4,6 @@ import { verifyToken } from '../middleware/verifyToken.js';
 
 const router = Router();
 
-router.get('/current', verifyToken, getBudgetsWithProgressController); // GET /budgets/current
+router.get('/', verifyToken, getBudgetsWithProgressController); // GET /budgets/current
 
 export default router;
