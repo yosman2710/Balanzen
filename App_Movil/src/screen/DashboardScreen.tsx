@@ -21,7 +21,7 @@ import { BalanceCard } from '../component/BalanceCard';
 import { SavingsGoalCard } from '../component/SavingsGoalCard';
 import { RecentTransactions } from '../component/RecentTransactions';
 import { styles } from '../styles/dashboard.style';
-import { api } from '../api/client'; // 👈 tu cliente axios con interceptor
+import { getDashboardResumen, getDashboardMetaAhorro } from '../api/dashboard'; // 👈 tu cliente axios con interceptor
 
 interface Transaction {
     id: string;
@@ -55,28 +55,69 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
     const currentMonth = new Date().toLocaleDateString('es-ES', { month: 'long' });
 
     useEffect(() => {
-        const fetchDashboard = async () => {
+        const fetchData = async () => {
             try {
-                const { data } = await api.get('/dashboard/resumen'); // 👈 backend endpoint
-                setMonthIncome(data.ingresosMes);
-                setMonthExpenses(data.gastosMes);
-                setIncomeChange(data.incomeChange || 0);
-                setExpenseChange(data.expenseChange || 0);
-                setSavingsGoal(data.meta);
+                setLoading(true);
+                // 1. Obtener Resumen Dashboard
+                // getDashboardResumen devuelve la data directamente (sin envoltorio "data" extra)
+                const data = await getDashboardResumen();
+
+                setMonthIncome(Number(data.ingresosMes));
+                setMonthExpenses(Number(data.gastosMes));
+                setIncomeChange(Number(data.incomeChange || 0));
+                setExpenseChange(Number(data.expenseChange || 0));
+
+                // Generar los últimos 5 meses
+                const last5MonthsLabels: string[] = [];
+                const last5MonthsValues: number[] = [];
+
+                for (let i = 4; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(1);
+                    date.setMonth(date.getMonth() - i);
+
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const key = `${year}-${month}`;
+
+                    const monthData = data.monthly.find((m: any) => m.mes === key);
+                    const value = monthData ? (Number(monthData.ingresos) - Number(monthData.gastos)) : 0;
+
+                    const monthName = date.toLocaleDateString('es-ES', { month: 'short' });
+                    const capitalizedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
+                    last5MonthsLabels.push(capitalizedMonth);
+                    last5MonthsValues.push(value);
+                }
 
                 setMonthlyData({
-                    labels: data.monthly.map((m: any) => m.mes),
-                    datasets: [{ data: data.monthly.map((m: any) => m.ingresos - m.gastos) }],
+                    labels: last5MonthsLabels,
+                    datasets: [{ data: last5MonthsValues }],
                 });
 
                 setRecentTransactions(data.recent);
+
+                // 2. Obtener Meta de Ahorro (Manejo de error independiente 404)
+                try {
+                    const metaData = await getDashboardMetaAhorro();
+                    setSavingsGoal(metaData);
+                } catch (metaErr: any) {
+                    if (metaErr.response && metaErr.response.status === 404) {
+                        setSavingsGoal(null);
+                    } else {
+                        console.log('Error meta ahorro:', metaErr);
+                    }
+                }
+
             } catch (err: any) {
+                console.error("Error cargando dashboard:", err);
                 setError(err?.response?.data?.error || 'Error cargando dashboard');
             } finally {
                 setLoading(false);
             }
         };
-        fetchDashboard();
+
+        fetchData();
     }, []);
 
     const monthBalance = monthIncome - monthExpenses;

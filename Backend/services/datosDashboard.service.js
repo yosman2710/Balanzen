@@ -19,8 +19,8 @@ export const fetchDashboardData = async (userId) => {
     return {
       ingresosMes,
       gastosMes,
-      ingresosAnterior,
-      gastosAnterior,
+      incomeChange: ingresosMes - ingresosAnterior,
+      expenseChange: gastosMes - gastosAnterior,
       monthly,
       recent
     };

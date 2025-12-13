@@ -55,8 +55,9 @@ export const getMetaAhorroDashboard = async (id_usuario) => {
   const meta = rows[0];
   return {
     name: meta.nombre_meta,
-    current: meta.monto_actual,
-    target: meta.monto_objetivo,
+    current: Number(meta.monto_actual),
+    target: Number(meta.monto_objetivo),
+    percentage: Number(((meta.monto_actual / meta.monto_objetivo) * 100).toFixed(2)),
     createdAt: meta.fecha_creacion,
   };
 };

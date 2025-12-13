@@ -3,50 +3,50 @@ import db from '../db.js';
 
 export const getIngresosMesActual = async (userId) => {
   const query = `
-    SELECT COALESCE(SUM(t.monto),0) AS ingresos_mes_actual
+    SELECT CAST(COALESCE(SUM(t.monto),0) AS DECIMAL(10,2)) AS ingresos_mes_actual
     FROM transacciones t
     JOIN categorias c ON t.id_categoria = c.id_categoria
     WHERE t.id_usuario = ? AND c.tipo='ingreso' 
       AND DATE_FORMAT(t.fecha, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
   `;
   const [rows] = await db.query(query, [userId]);
-  return rows[0].ingresos_mes_actual;
+  return Number(rows[0]?.ingresos_mes_actual || 0);
 };
 
 // Obtener gastos del mes actual
 export const getGastosMesActual = async (userId) => {
   const query = `
-    SELECT COALESCE(SUM(t.monto),0) AS gastos_mes_actual FROM transacciones t JOIN categorias c ON t.id_categoria = c.id_categoria WHERE t.id_usuario = ? AND c.tipo='gasto' AND DATE_FORMAT(t.fecha, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m');
+    SELECT CAST(COALESCE(SUM(t.monto),0) AS DECIMAL(10,2)) AS gastos_mes_actual FROM transacciones t JOIN categorias c ON t.id_categoria = c.id_categoria WHERE t.id_usuario = ? AND c.tipo='gasto' AND DATE_FORMAT(t.fecha, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m');
   `;
   const [rows] = await db.query(query, [userId]);
-  return rows[0].gastos_mes_actual;
+  return Number(rows[0]?.gastos_mes_actual || 0);
 };
 
 
 // Obtener ingresos del mes anterior
 export const getIngresosMesAnterior = async (userId) => {
   const query = `
-    SELECT COALESCE(SUM(t.monto),0) AS ingresos_mes_anterior
+    SELECT CAST(COALESCE(SUM(t.monto),0) AS DECIMAL(10,2)) AS ingresos_mes_anterior
     FROM transacciones t
     JOIN categorias c ON t.id_categoria = c.id_categoria
     WHERE t.id_usuario = ? AND c.tipo='ingreso'
       AND DATE_FORMAT(t.fecha, '%Y-%m') = DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m')
   `;
   const [rows] = await db.query(query, [userId]);
-  return rows[0].ingresos_mes_anterior;
+  return Number(rows[0]?.ingresos_mes_anterior || 0);
 };
 
 // Obtener gastos del mes anterior
 export const getGastosMesAnterior = async (userId) => {
   const query = `
-    SELECT COALESCE(SUM(t.monto),0) AS gastos_mes_anterior
+    SELECT CAST(COALESCE(SUM(t.monto),0) AS DECIMAL(10,2)) AS gastos_mes_anterior
     FROM transacciones t
     JOIN categorias c ON t.id_categoria = c.id_categoria
     WHERE t.id_usuario = ? AND c.tipo='gasto'
       AND DATE_FORMAT(t.fecha, '%Y-%m') = DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m')
   `;
   const [rows] = await db.query(query, [userId]);
-  return rows[0].gastos_mes_anterior;
+  return Number(rows[0]?.gastos_mes_anterior || 0);
 };
 
 
@@ -67,18 +67,25 @@ export const getMonthlyIncomeExpenses = async (userId) => {
     WHERE t.id_usuario = ?
       AND t.fecha >= DATE_SUB(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 5 MONTH)
     GROUP BY mes
-    ORDER BY mes;
+    ORDER BY mes DESC LIMIT 4;
   `;
   const [rows] = await db.query(query, [userId]);
-  return rows;
+  return rows.map((row) => ({
+    ...row,
+    ingresos: Number(row.ingresos),
+    gastos: Number(row.gastos),
+  }));
 };
 
 
 // Obtiene últimas 3 transacciones con formato de fecha
 export const getRecentTransactions = async (userId) => {
   const query = `
-    SELECT t.id_transaccion AS id, c.tipo AS type, c.nombre_categoria AS category, t.monto AS amount, DATE_FORMAT(t.fecha, '%d %b, %H:%i') AS date, t.descripcion AS description FROM transacciones t JOIN categorias c ON t.id_categoria = c.id_categoria WHERE t.id_usuario = ?  ORDER BY t.fecha DESC LIMIT 3;
+    SELECT t.id_transaccion AS id, c.tipo AS type, c.nombre_categoria AS category, t.monto AS amount, t.fecha AS date, t.descripcion AS description FROM transacciones t JOIN categorias c ON t.id_categoria = c.id_categoria WHERE t.id_usuario = ?  ORDER BY t.fecha DESC LIMIT 3;
   `;
   const [rows] = await db.query(query, [userId]);
-  return rows;
+  return rows.map((row) => ({
+    ...row,
+    amount: Number(row.amount),
+  }));
 };

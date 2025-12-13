@@ -54,6 +54,8 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
                             {new Date(item.date).toLocaleDateString('es-ES', {
                                 day: 'numeric',
                                 month: 'short',
+                                hour: '2-digit',
+                                minute: '2-digit'
                             })}
                         </Text>
                     </View>
