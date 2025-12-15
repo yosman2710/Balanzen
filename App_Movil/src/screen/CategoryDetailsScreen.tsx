@@ -227,13 +227,13 @@ export const CategoryDetailScreen: React.FC = () => {
                                                 styles.txIconWrapper,
                                                 {
                                                     backgroundColor:
-                                                        transactionType === 'income'
+                                                        transactionType === 'ingreso'
                                                             ? '#dcfce7'
                                                             : '#fee2e2',
                                                 },
                                             ]}
                                         >
-                                            {transactionType === 'income' ? (
+                                            {transactionType === 'ingreso' ? (
                                                 <TrendingUp size={20} color="#16a34a" />
                                             ) : (
                                                 <CreditCard size={20} color="#dc2626" />
@@ -264,12 +264,12 @@ export const CategoryDetailScreen: React.FC = () => {
                                         <Text
                                             style={[
                                                 styles.txAmount,
-                                                transactionType === 'income'
+                                                transactionType === 'ingreso'
                                                     ? styles.txAmountIncome
                                                     : styles.txAmountExpense,
                                             ]}
                                         >
-                                            {transactionType === 'income' ? '+' : '-'}$
+                                            {transactionType === 'ingreso' ? '+' : '-'}$
                                             {Number(transaction.monto).toLocaleString('es-ES', {
                                                 minimumFractionDigits: 2,
                                             })}

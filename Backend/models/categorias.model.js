@@ -45,8 +45,14 @@ export const getCategoriaById = async (id_categoria, id_usuario) => {
 // Listar todas las categorías por tipo (devuelve predeterminadas y personalizadas del usuario)
 export const getCategoriasUser = async (id_usuario) => {
   const query = `
-    SELECT * FROM categorias
-    WHERE (id_usuario = ? OR es_predeterminada = 1)
+    SELECT 
+    c.*,
+    COUNT(t.id_transaccion) AS transactionCount
+FROM categorias c
+LEFT JOIN transacciones t 
+    ON c.id_categoria = t.id_categoria 
+    AND (t.id_usuario = ? OR c.es_predeterminada = 1)
+GROUP BY c.id_categoria;
   `;
   const [rows] = await db.query(query, [id_usuario]);
   return rows;

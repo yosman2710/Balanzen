@@ -28,13 +28,14 @@ import {
     deleteCategory,
     type CategoryDTO,
 } from '../api/categories';
+import { IconByName } from '../component/IconMapper';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Categories'>;
 
 export const CategoriesScreen: React.FC = () => {
     const navigation = useNavigation<Nav>();
     const [categories, setCategories] = useState<CategoryDTO[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [categoryToDelete, setCategoryToDelete] =
         useState<CategoryDTO | null>(null);
@@ -63,10 +64,10 @@ export const CategoriesScreen: React.FC = () => {
     );
 
     const incomeCategories = filteredCategories.filter(
-        cat => cat.type === 'income',
+        cat => cat.type === 'ingreso',
     );
     const expenseCategories = filteredCategories.filter(
-        cat => cat.type === 'expense',
+        cat => cat.type === 'gasto',
     );
 
     const handleDeleteClick = (category: CategoryDTO) => {
@@ -291,9 +292,11 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
                     { backgroundColor: `${category.color}20` },
                 ]}
             >
-                <Text style={[styles.categoryIconText, { color: category.color }]}>
-                    ●
-                </Text>
+                <IconByName
+                    name={category.icon}
+                    color={category.color}
+                    size={24}
+                />
             </View>
             <View style={styles.categoryInfo}>
                 <View style={styles.categoryHeader}>

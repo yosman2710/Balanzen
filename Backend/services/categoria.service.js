@@ -33,7 +33,21 @@ export const getCategoriaByIdService = async (id_categoria, id_usuario) =>
   await getCategoriaById(id_categoria, id_usuario);
 
 // Buscar por tipo: muestra predeterminadas y del usuario
-export const getCategoriasUserService = async (id_usuario) =>
-  await getCategoriasUser(id_usuario);
+export const getCategoriasUserService = async (id_usuario) => {
+  const categorias = await getCategoriasUser(id_usuario);
+  return categorias.map(categoria => {
+    return {
+      id: categoria.id_categoria,
+      name: categoria.nombre_categoria,
+      icon: categoria.icon,
+      color: categoria.color,
+      type: categoria.tipo,
+      isDefault: categoria.es_predeterminada,
+      transactionCount: categoria.transactionCount
+    };
+
+  });
+}
+
 
 
