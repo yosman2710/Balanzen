@@ -97,3 +97,17 @@ export const getTransaccionesUser = async (id_usuario) => {
 
 
 
+
+// Buscar transacciones por rango de fecha y categoría
+export const findTransaccionesByCategoryAndDateRange = async (id_usuario, id_categoria, startDate, endDate) => {
+  const query = `
+    SELECT * 
+    FROM transacciones 
+    WHERE id_usuario = ? 
+      AND id_categoria = ? 
+      AND fecha BETWEEN ? AND ?
+    ORDER BY fecha DESC
+  `;
+  const [rows] = await db.query(query, [id_usuario, id_categoria, startDate, endDate]);
+  return rows;
+};

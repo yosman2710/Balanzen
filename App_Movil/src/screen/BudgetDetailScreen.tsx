@@ -1,13 +1,15 @@
-import React, { useState, useMemo, useEffect } from 'react';
+// src/screens/BudgetDetailScreen.tsx
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
     View,
     Text,
     ScrollView,
     TouchableOpacity,
     Modal,
+    Alert,
+    ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import {
     ArrowLeft,
     AlertCircle,
@@ -17,396 +19,377 @@ import {
     DollarSign,
     Target,
     Bell,
-    icons,
+    ShoppingCart,
 } from 'lucide-react-native';
-import { styles } from '../styles/BudgetDetaik.style';
-import { deleteBudget } from '../api/budgets';
-import { getTransactionsByCategory } from '../api/transacciones';
-import { RootStackParamList } from '../navegation/type';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+import { styles } from '../styles/BudgetDetail.style';
+import { iconMap } from '../component/IconMapper';
+import { getBudgetById } from '../api/budgets';
 
-type BudgetDetailRouteProp = RouteProp<RootStackParamList, 'BudgetDetail'>;
+// Defines the structure of the data returned by the API
+interface BudgetData {
+    budget: {
+        id: string;
+        categoryId: string;
+        categoryName: string;
+        categoryIcon: string;
+        categoryColor: string;
+        amount: number;
+        spent: number;
+        endDate: string;
+        alertThreshold: number;
+        startDate: string;
+    };
+    transactions: Array<{
+        id: string;
+        description: string;
+        amount: number;
+        date: string;
+    }>;
+}
 
-export const BudgetDetailScreen = () => {
-    const navigation = useNavigation<any>();
-    const route = useRoute<BudgetDetailRouteProp>();
-    const { budget } = route.params;
+interface BudgetDetailScreenProps {
+    onDeleteBudget: (budgetId: string) => void;
+    getCategoryIcon: (iconName: string, props?: { size?: number; color?: string }) => React.ReactNode;
+}
 
-    const [transactions, setTransactions] = useState<any[]>([]);
+export const BudgetDetailScreen: React.FC<BudgetDetailScreenProps> = ({
+    onDeleteBudget,
+    getCategoryIcon,
+}) => {
+    const navigation = useNavigation();
+    const route = useRoute();
+    const { id } = route.params as { id: string };
+
+    const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
+    const [loading, setLoading] = useState(true);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-    useEffect(() => {
-        if (budget.categoryId) {
-            loadTransactions();
-        }
-    }, [budget.categoryId]);
-
-    const loadTransactions = async () => {
+    const fetchBudgetDetails = async () => {
         try {
-            const data = await getTransactionsByCategory(budget.categoryId);
-            // Assuming data is an array of transactions. 
-            // We might need to filter by date if the API returns all history, 
-            // but budget usually implies current month/period. 
-            // For now, let's just show them or slice recent ones.
-            // Also ensure the backend returns compatible shape or map it.
-            setTransactions(data);
+            setLoading(true);
+            const data = await getBudgetById(id);
+            if (data) {
+                setBudgetData(data);
+            }
         } catch (error) {
-            console.error('Error loading transactions:', error);
+            console.error("Error al obtener detalles del presupuesto:", error);
+            Alert.alert("Error", "No se pudo cargar la información del presupuesto.");
+            navigation.goBack();
+        } finally {
+            setLoading(false);
         }
     };
 
-    const percentage = useMemo(
-        () => (budget.amount > 0 ? (budget.spent / budget.amount) * 100 : 0),
-        [budget.spent, budget.amount],
+    useFocusEffect(
+        useCallback(() => {
+            fetchBudgetDetails();
+        }, [id])
     );
-    const remaining = useMemo(
-        () => budget.amount - budget.spent,
-        [budget.amount, budget.spent],
-    );
-    const isOverBudget = budget.spent >= budget.amount;
-    const isNearLimit = percentage >= (budget.alertThreshold || 90) && percentage < 100;
+
+    const percentage = useMemo(() => {
+        if (!budgetData?.budget) return 0;
+        return budgetData.budget.amount > 0 ? (budgetData.budget.spent / budgetData.budget.amount) * 100 : 0;
+    }, [budgetData?.budget.spent, budgetData?.budget.amount]);
+
+    const remaining = useMemo(() => {
+        if (!budgetData?.budget) return 0;
+        return budgetData.budget.amount - budgetData.budget.spent;
+    }, [budgetData?.budget.amount, budgetData?.budget.spent]);
+
+    const isOverBudget = (budgetData?.budget.spent ?? 0) >= (budgetData?.budget.amount ?? 0);
+    const isNearLimit = percentage >= (budgetData?.budget.alertThreshold ?? 80) && percentage < 100;
 
     const getPeriodText = () => {
-        switch (budget.period) {
-            case 'weekly':
-                return 'Semanal';
-            case 'monthly':
-                return 'Mensual';
-            case 'yearly':
-                return 'Anual';
-            default:
-                return 'Mensual';
-        }
+        if (!budgetData?.budget) return '';
+        const startDate = new Date(budgetData.budget.startDate);
+        const endDate = new Date(budgetData.budget.endDate);
+        const diffInTime = endDate.getTime() - startDate.getTime();
+        const diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
+
+        if (diffInDays <= 7) return 'Semanal';
+        else if (diffInDays <= 30) return 'Mensual';
+        else return 'Anual';
     };
 
-    const handleDeleteBudget = async () => {
-        try {
-            await deleteBudget(budget.id);
-            setShowDeleteConfirm(false);
-            navigation.goBack();
-        } catch (error) {
-            console.error('Error deleting budget:', error);
-            // Optionally show alert
-        }
+    const handleDeleteBudget = () => {
+        if (!budgetData?.budget) return;
+        onDeleteBudget(budgetData.budget.id);
+        Alert.alert('Presupuesto eliminado', 'El presupuesto ha sido eliminado correctamente');
+        setShowDeleteConfirm(false);
+        navigation.goBack();
     };
 
-    const getCategoryIcon = (iconName: string, props?: { size?: number; color?: string }) => {
-        const Icon = icons[iconName as keyof typeof icons] || AlertCircle;
-        return <Icon size={props?.size || 24} color={props?.color || '#000'} />;
+
+    const getDefaultIcon = (iconName: string, size = 24, color = '#059669') => {
+        const IconComponent = iconMap[iconName] ?? ShoppingCart;
+        return <IconComponent size={size} color={color} />;
     };
 
-    const headerBg = '#059669';
+    if (loading) {
+        return (
+            <SafeAreaView style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color="#059669" />
+            </SafeAreaView>
+        );
+    }
+
+    if (!budgetData) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                        <ArrowLeft size={20} color="#ffffff" />
+                        <Text style={styles.backText}>Volver</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={[styles.body, { justifyContent: 'center', alignItems: 'center' }]}>
+                    <Text>No se pudo cargar la información.</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
+    const { budget, transactions } = budgetData;
 
     return (
         <SafeAreaView style={styles.container}>
             {/* Header */}
-            <View style={[styles.header, { backgroundColor: headerBg }]}>
-                <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={styles.backButton}
-                    activeOpacity={0.8}
-                >
+            <View style={[styles.header, { backgroundColor: '#059669' }]}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <ArrowLeft size={20} color="#ffffff" />
                     <Text style={styles.backText}>Volver</Text>
                 </TouchableOpacity>
-
                 <View style={styles.headerTop}>
-                    <View style={styles.headerTextBlock}>
+                    <View style={styles.headerText}>
                         <Text style={styles.headerTitle}>{budget.categoryName}</Text>
-                        <Text style={styles.headerSubtitle}>
-                            Presupuesto {getPeriodText()}
-                        </Text>
+                        <Text style={styles.headerSubtitle}>Presupuesto {getPeriodText()}</Text>
                     </View>
-                    <View
-                        style={[
-                            styles.headerIconWrapper,
-                            {
-                                backgroundColor: `${budget.categoryColor}40`,
-                            },
-                        ]}
-                    >
-                        {getCategoryIcon(budget.categoryIcon, {
-                            size: 26,
-                            color: budget.categoryColor,
-                        })}
+                    <View style={[styles.headerIcon, { backgroundColor: `${budget.categoryColor}40` }]}>
+                        {getCategoryIcon ? getCategoryIcon(budget.categoryIcon, { size: 24, color: budget.categoryColor }) : getDefaultIcon(budget.categoryIcon, 24, budget.categoryColor)}
                     </View>
                 </View>
             </View>
 
-            {/* Contenido */}
-            <ScrollView
-                style={styles.body}
-                contentContainerStyle={styles.bodyContent}
-                showsVerticalScrollIndicator={false}
-            >
+            <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} showsVerticalScrollIndicator={false}>
                 {/* Estado del presupuesto */}
-                <View
-                    style={[
-                        styles.card,
-                        isOverBudget
-                            ? styles.cardOver
-                            : isNearLimit
-                                ? styles.cardNear
-                                : styles.cardOk,
-                    ]}
-                >
-                    <View style={styles.cardSection}>
-                        <View style={styles.rowBetween}>
+                <View style={[styles.statusCard, isOverBudget ? styles.statusOver : isNearLimit ? styles.statusNear : styles.statusOk]}>
+                    <View style={styles.cardContent}>
+                        <View style={styles.amountRow}>
                             <View>
-                                <Text style={styles.labelMuted}>Gastado</Text>
-                                <Text
+                                <Text style={styles.labelSmall}>Gastado</Text>
+                                <Text style={[styles.amountLarge, isOverBudget && styles.amountOver]}>
+                                    ${budget.spent.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                                </Text>
+                            </View>
+                            <View style={styles.amountRight}>
+                                <Text style={styles.labelSmall}>Presupuesto</Text>
+                                <Text style={styles.amountLarge}>
+                                    ${budget.amount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                                </Text>
+                            </View>
+                        </View>
+
+                        {/* Barra de progreso */}
+                        <View style={styles.progressContainer}>
+                            <View style={styles.progressTrack}>
+                                <View
                                     style={[
-                                        styles.amountMain,
-                                        isOverBudget && { color: '#dc2626' },
+                                        styles.progressBar,
+                                        {
+                                            width: `${Math.min(percentage, 100)}%`,
+                                            backgroundColor: isOverBudget ? '#dc2626' : isNearLimit ? '#f97316' : '#10b981',
+                                        },
                                     ]}
-                                >
-                                    $
-                                    {budget.spent.toLocaleString('es-ES', {
-                                        minimumFractionDigits: 2,
-                                    })}
-                                </Text>
+                                />
                             </View>
-                            <View style={{ alignItems: 'flex-end' }}>
-                                <Text style={styles.labelMuted}>Presupuesto</Text>
-                                <Text style={styles.amountMain}>
-                                    $
-                                    {budget.amount.toLocaleString('es-ES', {
-                                        minimumFractionDigits: 2,
-                                    })}
-                                </Text>
-                            </View>
+                            {percentage > 100 && (
+                                <View
+                                    style={[
+                                        styles.progressOver,
+                                        { width: `${Math.min((percentage - 100) * 0.5, 50)}%` },
+                                    ]}
+                                />
+                            )}
                         </View>
 
-                        {/* Barra de progreso simple */}
-                        <View style={styles.progressTrack}>
-                            <View
-                                style={[
-                                    styles.progressFill,
-                                    {
-                                        width: `${Math.min(percentage, 100)}%`,
-                                        backgroundColor: isOverBudget
-                                            ? '#dc2626'
-                                            : isNearLimit
-                                                ? '#f97316'
-                                                : '#10b981',
-                                    },
-                                ]}
-                            />
-                        </View>
-
-                        <View style={styles.rowBetween}>
-                            <Text
-                                style={[
-                                    styles.statusText,
-                                    isOverBudget
-                                        ? { color: '#dc2626' }
-                                        : isNearLimit
-                                            ? { color: '#f97316' }
-                                            : { color: '#059669' },
-                                ]}
-                            >
+                        {/* ✅ LÍNEAS CORREGIDAS */}
+                        <View style={styles.statusRow}>
+                            <Text style={[
+                                styles.statusPercent,
+                                isOverBudget ? styles.statusOverText :
+                                    isNearLimit ? styles.statusNearText :
+                                        styles.statusOkText
+                            ]}>
                                 {percentage.toFixed(1)}% utilizado
                             </Text>
-                            <Text
-                                style={[
-                                    styles.statusTextSmall,
-                                    isOverBudget
-                                        ? { color: '#dc2626' }
-                                        : remaining <= budget.amount * 0.1
-                                            ? { color: '#f97316' }
-                                            : { color: '#059669' },
-                                ]}
-                            >
+                            <Text style={[
+                                styles.statusRemaining,
+                                isOverBudget ? styles.statusOverText :
+                                    remaining <= budget.amount * 0.1 ? styles.statusNearText :
+                                        styles.statusOkText
+                            ]}>
                                 {isOverBudget
-                                    ? `-$${Math.abs(remaining).toLocaleString('es-ES', {
-                                        minimumFractionDigits: 2,
-                                    })} excedido`
-                                    : `$${remaining.toLocaleString('es-ES', {
-                                        minimumFractionDigits: 2,
-                                    })} restante`}
+                                    ? `-$${Math.abs(remaining).toLocaleString('es-ES', { minimumFractionDigits: 2 })} excedido`
+                                    : `$${remaining.toLocaleString('es-ES', { minimumFractionDigits: 2 })} restante`}
                             </Text>
                         </View>
 
                         {isOverBudget && (
-                            <View style={styles.alertBoxOver}>
-                                <AlertCircle size={16} color="#dc2626" style={{ marginRight: 6 }} />
-                                <Text style={styles.alertTextOver}>
-                                    Has excedido tu presupuesto
-                                </Text>
+                            <View style={styles.alertOver}>
+                                <AlertCircle size={16} color="#dc2626" style={styles.alertIcon} />
+                                <Text style={styles.alertText}>Has excedido tu presupuesto</Text>
                             </View>
                         )}
 
                         {isNearLimit && !isOverBudget && (
-                            <View style={styles.alertBoxNear}>
-                                <AlertCircle size={16} color="#f97316" style={{ marginRight: 6 }} />
-                                <Text style={styles.alertTextNear}>
-                                    Estás cerca del límite de tu presupuesto
-                                </Text>
+                            <View style={styles.alertNear}>
+                                <AlertCircle size={16} color="#f97316" style={styles.alertIcon} />
+                                <Text style={styles.alertTextNear}>Estás cerca del límite de tu presupuesto</Text>
                             </View>
                         )}
                     </View>
                 </View>
 
-                {/* Información del presupuesto */}
-                <View style={styles.card}>
-                    <Text style={styles.cardTitle}>Configuración</Text>
+                {/* Configuración */}
+                <View style={styles.configCard}>
+                    <Text style={styles.sectionTitle}>Configuración</Text>
+                    <View style={styles.infoList}>
+                        <View style={styles.infoItem}>
+                            <View style={[styles.infoIcon, { backgroundColor: '#dbeafe' }]}>
+                                <DollarSign size={20} color="#2563eb" />
+                            </View>
+                            <View style={styles.infoContent}>
+                                <Text style={styles.infoLabel}>Monto del presupuesto</Text>
+                                <Text style={styles.infoValue}>
+                                    ${budget.amount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                                </Text>
+                            </View>
+                        </View>
 
-                    <View style={styles.infoRow}>
-                        <View style={[styles.infoIconWrapper, { backgroundColor: '#dbeafe' }]}>
-                            <DollarSign size={20} color="#2563eb" />
+                        <View style={styles.infoItem}>
+                            <View style={[styles.infoIcon, { backgroundColor: '#d1fae5' }]}>
+                                <Calendar size={20} color="#059669" />
+                            </View>
+                            <View style={styles.infoContent}>
+                                <Text style={styles.infoLabel}>Fecha de inicio</Text>
+                                <Text style={styles.infoValue}>
+                                    {new Date(budget.startDate).toLocaleDateString('es-ES', {
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric',
+                                    })}
+                                </Text>
+                            </View>
                         </View>
-                        <View style={styles.infoTextBlock}>
-                            <Text style={styles.labelMuted}>Monto del presupuesto</Text>
-                            <Text style={styles.infoValue}>
-                                $
-                                {budget.amount.toLocaleString('es-ES', {
-                                    minimumFractionDigits: 2,
-                                })}
-                            </Text>
-                        </View>
-                    </View>
 
-                    <View style={styles.infoRow}>
-                        <View style={[styles.infoIconWrapper, { backgroundColor: '#ede9fe' }]}>
-                            <Calendar size={20} color="#7c3aed" />
+                        <View style={styles.infoItem}>
+                            <View style={[styles.infoIcon, { backgroundColor: '#ede9fe' }]}>
+                                <Target size={20} color="#7c3aed" />
+                            </View>
+                            <View style={styles.infoContent}>
+                                <Text style={styles.infoLabel}>Fecha de finalización</Text>
+                                <Text style={styles.infoValue}>
+                                    {new Date(budget.endDate).toLocaleDateString('es-ES', {
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric',
+                                    })}
+                                </Text>
+                            </View>
                         </View>
-                        <View style={styles.infoTextBlock}>
-                            <Text style={styles.labelMuted}>Periodo</Text>
-                            <Text style={styles.infoValue}>{getPeriodText()}</Text>
-                        </View>
-                    </View>
 
-                    <View style={styles.infoRow}>
-                        <View style={[styles.infoIconWrapper, { backgroundColor: '#ffedd5' }]}>
-                            <Bell size={20} color="#ea580c" />
-                        </View>
-                        <View style={styles.infoTextBlock}>
-                            <Text style={styles.labelMuted}>Umbral de alerta</Text>
-                            <Text style={styles.infoValue}>{budget.alertThreshold ? budget.alertThreshold : 90}%</Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.infoRow}>
-                        <View style={[styles.infoIconWrapper, { backgroundColor: '#d1fae5' }]}>
-                            <Target size={20} color="#059669" />
-                        </View>
-                        <View style={styles.infoTextBlock}>
-                            <Text style={styles.labelMuted}>Fecha de inicio</Text>
-                            <Text style={styles.infoValue}>
-                                {new Date(budget.startDate).toLocaleDateString('es-ES', {
-                                    day: 'numeric',
-                                    month: 'long',
-                                    year: 'numeric',
-                                })}
-                            </Text>
+                        <View style={styles.infoItem}>
+                            <View style={[styles.infoIcon, { backgroundColor: '#ffedd5' }]}>
+                                <Bell size={20} color="#ea580c" />
+                            </View>
+                            <View style={styles.infoContent}>
+                                <Text style={styles.infoLabel}>Umbral de alerta</Text>
+                                <Text style={styles.infoValue}>{budget.alertThreshold}%</Text>
+                            </View>
                         </View>
                     </View>
                 </View>
 
                 {/* Transacciones */}
-                <View style={styles.section}>
-                    <View style={styles.rowBetween}>
-                        <Text style={styles.sectionTitle}>
-                            Transacciones Recientes
+                <View style={styles.transactionsSection}>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionTitle}>Transacciones ({transactions.length})</Text>
+                        <Text style={styles.sectionSubtitle}>
+                            Total: ${budget.spent.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
                         </Text>
-                        {/* We could show total spent here as well */}
                     </View>
-                    {/* Note: data from backend might differ in shape, adjust below as needed */}
+
                     {transactions.length === 0 ? (
-                        <View style={[styles.card, styles.emptyCard]}>
-                            <View style={styles.emptyIconCircle}>
-                                <TrendingUp size={28} color="#9ca3af" />
+                        <View style={styles.emptyCard}>
+                            <View style={styles.emptyIcon}>
+                                <TrendingUp size={32} color="#9ca3af" />
                             </View>
-                            <Text style={styles.emptyTitle}>Sin transacciones recientes</Text>
-                            <Text style={styles.emptySubtitle}>
-                                No se encontraron movimientos
-                            </Text>
+                            <Text style={styles.emptyTitle}>Sin transacciones aún</Text>
+                            <Text style={styles.emptySubtitle}>No hay gastos en esta categoría en el periodo</Text>
                         </View>
                     ) : (
-                        <View style={styles.txList}>
-                            {transactions.map((tx, idx) => (
-                                <View key={tx.id_transaccion || idx} style={styles.txCard}>
-                                    <View style={styles.txLeft}>
-                                        <View
-                                            style={[
-                                                styles.txIconCircle,
-                                                {
-                                                    backgroundColor: `${budget.categoryColor}20`,
-                                                },
-                                            ]}
-                                        >
-                                            {getCategoryIcon(budget.categoryIcon, {
-                                                size: 20,
-                                                color: budget.categoryColor,
-                                            })}
+                        <View style={styles.transactionsList}>
+                            {transactions.map(transaction => (
+                                <View key={transaction.id} style={styles.transactionCard}>
+                                    <View style={styles.transactionLeft}>
+                                        <View style={[styles.transactionIcon, { backgroundColor: `${budget.categoryColor}20` }]}>
+                                            {getCategoryIcon ? getCategoryIcon(budget.categoryIcon, { size: 20, color: budget.categoryColor }) : getDefaultIcon(budget.categoryIcon, 20, budget.categoryColor)}
                                         </View>
-                                        <View style={styles.txInfo}>
-                                            <Text style={styles.txDescription}>{tx.descripcion || tx.nombre_transaccion || 'Sin descripción'}</Text>
-                                            <Text style={styles.txDate}>
-                                                {new Date(tx.fecha).toLocaleDateString('es-ES', {
+                                        <View style={styles.transactionInfo}>
+                                            <Text style={styles.transactionDesc}>{transaction.description}</Text>
+                                            <Text style={styles.transactionDate}>
+                                                {new Date(transaction.date).toLocaleDateString('es-ES', {
                                                     day: 'numeric',
                                                     month: 'short',
                                                 })}
                                             </Text>
                                         </View>
                                     </View>
-                                    <View style={styles.txRight}>
-                                        <Text style={styles.txAmount}>
-                                            -${Number(tx.monto).toLocaleString('es-ES', {
-                                                minimumFractionDigits: 2,
-                                            })}
-                                        </Text>
-                                    </View>
+                                    <Text style={styles.transactionAmount}>
+                                        -${transaction.amount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                                    </Text>
                                 </View>
                             ))}
                         </View>
                     )}
                 </View>
 
-                {/* Eliminar presupuesto */}
-                <View style={styles.deleteSection}>
-                    <TouchableOpacity
-                        style={styles.deleteButton}
-                        onPress={() => setShowDeleteConfirm(true)}
-                        activeOpacity={0.85}
-                    >
-                        <Trash2 size={18} color="#dc2626" style={{ marginRight: 6 }} />
-                        <Text style={styles.deleteButtonText}>Eliminar Presupuesto</Text>
-                    </TouchableOpacity>
-                </View>
+                {/* Botón eliminar */}
+                <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => setShowDeleteConfirm(true)}
+                    activeOpacity={0.85}
+                >
+                    <Trash2 size={18} color="#dc2626" style={styles.deleteIcon} />
+                    <Text style={styles.deleteText}>Eliminar Presupuesto</Text>
+                </TouchableOpacity>
             </ScrollView>
 
-            {/* Modal de confirmación */}
-            <Modal
-                visible={showDeleteConfirm}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setShowDeleteConfirm(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalCard}>
+            {/* Modal confirmación */}
+            <Modal visible={showDeleteConfirm} transparent animationType="fade">
+                <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setShowDeleteConfirm(false)}>
+                    <View style={styles.modalContent}>
                         <View style={styles.modalHeader}>
-                            <AlertCircle size={22} color="#dc2626" />
+                            <AlertCircle size={24} color="#dc2626" />
                             <Text style={styles.modalTitle}>¿Estás seguro?</Text>
                         </View>
-                        <Text style={styles.modalText}>
+                        <Text style={styles.modalDescription}>
                             Esta acción eliminará el presupuesto. No se puede deshacer.
                         </Text>
-                        <View style={styles.modalButtonsRow}>
+                        <View style={styles.modalButtons}>
                             <TouchableOpacity
                                 style={styles.modalCancel}
                                 onPress={() => setShowDeleteConfirm(false)}
                             >
                                 <Text style={styles.modalCancelText}>Cancelar</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.modalDelete}
-                                onPress={handleDeleteBudget}
-                            >
+                            <TouchableOpacity style={styles.modalDelete} onPress={handleDeleteBudget}>
                                 <Text style={styles.modalDeleteText}>Eliminar Presupuesto</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
-                </View>
+                </TouchableOpacity>
             </Modal>
         </SafeAreaView>
     );

@@ -3,8 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { AddBudgetScreen } from '../screen/AddBudgetScreen';
 import { getCategories, CategoryDTO } from '../api/categories';
 import { createBudget } from '../api/budgets';
+import { useNavigation } from '@react-navigation/native';
 
 export const AddBudgetWrapper = () => {
+    const navigation = useNavigation();
     const [categories, setCategories] = useState<CategoryDTO[]>([]);
 
     useEffect(() => {
@@ -60,6 +62,7 @@ export const AddBudgetWrapper = () => {
         <AddBudgetScreen
             categories={categories}
             onAddBudget={handleAddBudget}
+            onClose={() => navigation.goBack()}
         />
     );
 };

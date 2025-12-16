@@ -133,20 +133,7 @@ export function BudgetsScreen() {
                                 key={b.id}
                                 activeOpacity={0.8}
                                 onPress={() => {
-                                    navigation.navigate('BudgetDetail', {
-                                        budget: {
-                                            id: b.id,
-                                            categoryName: b.category,
-                                            categoryIcon: b.icon,
-                                            categoryColor: b.color,
-                                            amount: b.limit,
-                                            spent: b.spent,
-                                            period: 'monthly',
-                                            categoryId: b.categoryId,
-                                            alertThreshold: 0,
-                                            startDate: new Date().toISOString()
-                                        }
-                                    });
+                                    navigation.navigate('BudgetDetail', { id: b.id });
                                 }}
                             >
                                 <Card style={[styles.budgetCard, over && styles.budgetCardOver]}>

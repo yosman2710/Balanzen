@@ -1,3 +1,4 @@
+// src/styles/AddBudget.style.ts
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -5,11 +6,13 @@ export const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#ffffff',
     },
+
+    /* Header */
     header: {
+        backgroundColor: '#059669',
         paddingHorizontal: 24,
         paddingTop: 32,
-        paddingBottom: 16,
-        backgroundColor: '#059669',
+        paddingBottom: 20,
     },
     backButton: {
         flexDirection: 'row',
@@ -17,87 +20,124 @@ export const styles = StyleSheet.create({
         marginBottom: 12,
     },
     backText: {
-        marginLeft: 6,
         color: '#e5e7eb',
         fontSize: 14,
+        marginLeft: 6,
     },
     headerTitle: {
+        color: '#ffffff',
         fontSize: 20,
         fontWeight: '700',
-        color: '#ffffff',
         marginBottom: 4,
     },
     headerSubtitle: {
-        fontSize: 13,
-        color: 'rgba(255,255,255,0.8)',
+        color: '#e5e7eb',
+        fontSize: 14,
+    },
+
+    /* Form */
+    form: {
+        flex: 1,
     },
     formContent: {
         paddingHorizontal: 24,
-        paddingVertical: 16,
-        paddingBottom: 32,
+        paddingVertical: 20,
+        gap: 16,
     },
+
+    /* Campos */
     field: {
-        marginBottom: 16,
+        marginBottom: 4,
     },
     label: {
-        fontSize: 13,
-        fontWeight: '500',
-        color: '#475569',
+        fontSize: 14,
+        color: '#0f172a',
         marginBottom: 6,
+        fontWeight: '500',
     },
     inputWrapper: {
-        position: 'relative',
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderRadius: 10,
         borderWidth: 1,
-        borderColor: '#e2e8f0',
-        borderRadius: 12,
-        backgroundColor: '#f8fafc',
+        borderColor: '#cbd5f5',
+        backgroundColor: '#ffffff',
+        paddingHorizontal: 10,
     },
-    inputErrorWrapper: {
+    inputError: {
         borderColor: '#dc2626',
-        backgroundColor: '#fef2f2',
     },
     inputIcon: {
-        position: 'absolute',
-        left: 12,
-        top: 12,
-    },
-    selectContent: {
-        flex: 1,
-        justifyContent: 'center',
-        paddingHorizontal: 40,
-        paddingVertical: 10,
+        marginRight: 6,
     },
     input: {
-        borderRadius: 12,
-        paddingHorizontal: 12,
+        flex: 1,
         paddingVertical: 10,
         fontSize: 14,
         color: '#0f172a',
     },
-    inputBig: {
-        fontSize: 22,
+    inputLarge: {
+        fontSize: 20,
         fontWeight: '600',
     },
-    inputError: {
-        borderColor: '#dc2626',
+    categoryPlaceholder: {
+        flex: 1,
+        paddingVertical: 10,
+        fontSize: 14,
+        color: '#0f172a',
     },
     errorText: {
         marginTop: 4,
         fontSize: 12,
         color: '#dc2626',
     },
-    helpText: {
+    helperText: {
+        marginTop: 4,
         fontSize: 12,
         color: '#64748b',
-        marginTop: 4,
     },
-    categoryPreview: {
+
+    /* Grid categorías */
+    categoryGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+        marginBottom: 12,
+    },
+    categoryItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: 'transparent',
+        backgroundColor: '#f8fafc',
+    },
+    categoryItemActive: {
+        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+        borderColor: '#059669',
+    },
+    categoryDot: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        marginRight: 8,
+    },
+    categoryItemText: {
+        fontSize: 13,
+        fontWeight: '500',
+        color: '#64748b',
+    },
+
+    /* Preview categoría */
+    previewCategory: {
         padding: 12,
         backgroundColor: '#f1f5f9',
         borderRadius: 12,
-        marginBottom: 16,
+        marginBottom: 12,
     },
-    previewTitle: {
+    previewLabel: {
         fontSize: 12,
         color: '#475569',
         marginBottom: 8,
@@ -105,20 +145,17 @@ export const styles = StyleSheet.create({
     previewRow: {
         flexDirection: 'row',
         alignItems: 'center',
+        gap: 10,
     },
-    previewIcon: {
-        width: 44,
-        height: 44,
-        borderRadius: 14,
-        alignItems: 'center',
+    previewIconWrapper: {
+        width: 48,
+        height: 48,
+        borderRadius: 12,
         justifyContent: 'center',
-        marginRight: 12,
-    },
-    previewIconText: {
-        fontSize: 20,
+        alignItems: 'center',
     },
     previewName: {
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: '600',
         color: '#0f172a',
     },
@@ -126,164 +163,140 @@ export const styles = StyleSheet.create({
         fontSize: 12,
         color: '#64748b',
     },
-    periodsRow: {
-        flexDirection: 'row',
-        gap: 8,
-    },
-    periodButton: {
-        flex: 1,
-        paddingVertical: 10,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: '#e2e8f0',
-        alignItems: 'center',
-        backgroundColor: '#f8fafc',
-    },
-    periodButtonActive: {
-        backgroundColor: '#10b981',
-        borderColor: '#10b981',
-    },
-    periodButtonText: {
-        fontSize: 13,
-        fontWeight: '500',
-        color: '#64748b',
-    },
-    periodButtonTextActive: {
-        color: '#ffffff',
-    },
+
+    /* Slider umbral */
     sliderContainer: {
-        marginBottom: 8,
-    },
-    slider: {
-        width: '100%',
         height: 40,
+        justifyContent: 'center',
     },
-    sliderValue: {
-        alignItems: 'flex-end',
+    sliderTrack: {
+        height: 4,
+        borderRadius: 2,
+        backgroundColor: '#e2e8f0',
+        position: 'relative',
+        overflow: 'hidden',
     },
-    sliderValueText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#10b981',
+    sliderFill: {
+        height: '100%',
+        backgroundColor: '#059669',
+        borderRadius: 2,
+    },
+    sliderThumb: {
+        position: 'absolute',
+        width: 20,
+        height: 20,
+        borderRadius: 10,
+        backgroundColor: '#059669',
+        top: -8,
+        borderWidth: 3,
+        borderColor: '#ffffff',
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
+        elevation: 3,
+    },
+    sliderLabels: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 8,
     },
     sliderLabel: {
         fontSize: 12,
-        color: '#475569',
-        marginBottom: 8,
+        color: '#64748b',
     },
+    sliderValue: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#059669',
+    },
+
+    /* Alert box */
     alertBox: {
         flexDirection: 'row',
-        backgroundColor: '#fffbeb',
+        alignItems: 'flex-start',
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: '#fef3c7',
         borderWidth: 1,
         borderColor: '#fcd34d',
-        borderRadius: 10,
-        padding: 12,
-        gap: 8,
+        marginTop: 8,
+    },
+    alertIcon: {
+        marginTop: 2,
+        marginRight: 6,
     },
     alertText: {
         fontSize: 12,
         color: '#92400e',
         flex: 1,
+        lineHeight: 16,
     },
+    alertHighlight: {
+        fontWeight: '600',
+    },
+
+    /* Resumen */
     summaryCard: {
+        padding: 12,
         backgroundColor: '#ecfdf5',
+        borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#a7f3d0',
-        borderRadius: 14,
-        padding: 16,
-        marginBottom: 16,
+        borderColor: '#bbf7d0',
     },
     summaryTitle: {
         fontSize: 13,
-        color: '#047857',
-        fontWeight: '600',
-        marginBottom: 12,
+        color: '#059669',
+        marginBottom: 8,
+        fontWeight: '500',
     },
     summaryRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 6,
+        marginBottom: 4,
     },
     summaryLabel: {
         fontSize: 12,
-        color: '#047857',
+        color: '#64748b',
     },
     summaryValue: {
         fontSize: 13,
-        fontWeight: '600',
-        color: '#065f46',
+        fontWeight: '500',
+        color: '#0f172a',
     },
+
+    /* Botones */
     buttonsRow: {
         flexDirection: 'row',
         gap: 12,
-        marginTop: 12,
+        marginTop: 20,
+        marginBottom: 16,
     },
-    button: {
+    buttonOutline: {
         flex: 1,
+        borderWidth: 1,
+        borderColor: '#059669',
+        borderRadius: 12,
         paddingVertical: 14,
-        borderRadius: 14,
         alignItems: 'center',
         justifyContent: 'center',
     },
-    buttonOutline: {
-        borderWidth: 1,
-        borderColor: '#d1d5db',
-        backgroundColor: '#ffffff',
-    },
     buttonOutlineText: {
-        fontSize: 15,
-        fontWeight: '500',
-        color: '#475569',
+        color: '#059669',
+        fontWeight: '600',
+        fontSize: 14,
     },
     buttonPrimary: {
-        backgroundColor: '#10b981',
+        flex: 1,
+        backgroundColor: '#059669',
+        borderRadius: 12,
+        paddingVertical: 14,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     buttonPrimaryText: {
-        fontSize: 15,
-        fontWeight: '500',
         color: '#ffffff',
-    },
-    // Modal
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(15,23,42,0.4)',
-        justifyContent: 'flex-end',
-    },
-    modalContent: {
-        backgroundColor: '#ffffff',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-        borderTopLeftRadius: 16,
-        borderTopRightRadius: 16,
-    },
-    modalTitle: {
-        fontSize: 15,
         fontWeight: '600',
-        color: '#0f172a',
-        marginBottom: 10,
-    },
-    modalItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 8,
-    },
-    modalDot: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        marginRight: 10,
-    },
-    modalItemText: {
         fontSize: 14,
-        color: '#0f172a',
     },
-    selectText: {
-        fontSize: 14,
-        color: '#0f172a',
-    },
-    selectPlaceholder: {
-        fontSize: 14,
-        color: '#94a3b8',
-    },
-
 });

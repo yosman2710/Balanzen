@@ -1,4 +1,5 @@
 // src/styles/BudgetDetail.style.ts
+// src/styles/BudgetDetail.style.ts
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -28,7 +29,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'flex-start',
     },
-    headerTextBlock: {
+    headerText: {
         flex: 1,
         paddingRight: 12,
     },
@@ -42,10 +43,10 @@ export const styles = StyleSheet.create({
         color: 'rgba(255,255,255,0.8)',
         fontSize: 14,
     },
-    headerIconWrapper: {
+    headerIcon: {
         width: 48,
         height: 48,
-        borderRadius: 14,
+        borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -61,282 +62,342 @@ export const styles = StyleSheet.create({
         gap: 16,
     },
 
-    /* Cards base */
-    card: {
-        borderRadius: 16,
-        padding: 16,
-        backgroundColor: '#ffffff',
-        borderWidth: 1,
-        borderColor: '#e5e7eb',
-    },
-    cardSection: {
-        gap: 12,
-    },
-
     /* Estado del presupuesto */
-    cardOver: {
+    statusCard: {
+        borderRadius: 16,
+        padding: 20,
+        borderWidth: 1,
+    },
+    statusOver: {
         backgroundColor: '#fef2f2',
         borderColor: '#fecaca',
     },
-    cardNear: {
+    statusNear: {
         backgroundColor: '#fffbeb',
         borderColor: '#fed7aa',
     },
-    cardOk: {
+    statusOk: {
         backgroundColor: '#ecfdf5',
         borderColor: '#bbf7d0',
     },
-    rowBetween: {
+    cardContent: {
+        gap: 16,
+    },
+    amountRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    amountRight: {
+        alignItems: 'flex-end',
+    },
+    labelSmall: {
+        fontSize: 12,
+        color: '#6b7280',
+        marginBottom: 4,
+    },
+    amountLarge: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#111827',
+    },
+    amountOver: {
+        color: '#dc2626',
+    },
+
+    progressContainer: {
+        position: 'relative',
+    },
+    progressTrack: {
+        height: 12,
+        borderRadius: 6,
+        backgroundColor: '#e5e7eb',
+        overflow: 'hidden',
+    },
+    progressBar: {
+        height: '100%',
+        borderRadius: 6,
+    },
+    progressOver: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        height: 12,
+        backgroundColor: '#dc2626',
+        borderRadius: 6,
+    },
+
+    statusRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    labelMuted: {
-        fontSize: 12,
-        color: '#6b7280',
-        marginBottom: 2,
-    },
-    amountMain: {
-        fontSize: 18,
+    statusPercent: {
+        fontSize: 14,
         fontWeight: '600',
-        color: '#111827',
     },
-
-    progressTrack: {
-        height: 10,
-        borderRadius: 999,
-        backgroundColor: '#e5e7eb',
-        overflow: 'hidden',
-    },
-    progressFill: {
-        height: '100%',
-        borderRadius: 999,
-    },
-
-    statusText: {
-        fontSize: 13,
-        fontWeight: '500',
-    },
-    statusTextSmall: {
+    statusRemaining: {
         fontSize: 12,
     },
+    statusOverText: {
+        color: '#dc2626',
+    },
+    statusNearText: {
+        color: '#f97316',
+    },
+    statusOkText: {
+        color: '#059669',
+    },
 
-    alertBoxOver: {
+    alertOver: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        padding: 10,
+        gap: 8,
+        padding: 12,
+        backgroundColor: 'rgba(239,68,68,0.1)',
         borderRadius: 10,
-        backgroundColor: '#fee2e2',
+        borderWidth: 1,
+        borderColor: 'rgba(239,68,68,0.2)',
     },
-    alertTextOver: {
-        fontSize: 12,
-        color: '#b91c1c',
+    alertNear: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: 8,
+        padding: 12,
+        backgroundColor: 'rgba(249,115,22,0.1)',
+        borderRadius: 10,
+        borderColor: 'rgba(249,115,22,0.2)',
+    },
+    alertIcon: {
+        marginTop: 2,
+    },
+    alertText: {
+        fontSize: 13,
+        color: '#dc2626',
         flex: 1,
     },
-    alertBoxNear: {
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        padding: 10,
-        borderRadius: 10,
-        backgroundColor: '#ffedd5',
-    },
     alertTextNear: {
-        fontSize: 12,
-        color: '#c2410c',
+        fontSize: 13,
+        color: '#f97316',
         flex: 1,
     },
 
     /* Configuración */
-    cardTitle: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#0f172a',
-        marginBottom: 10,
+    configCard: {
+        borderRadius: 16,
+        padding: 20,
+        backgroundColor: '#ffffff',
+        borderWidth: 1,
+        borderColor: '#e5e7eb',
     },
-    infoRow: {
+    sectionTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#111827',
+        marginBottom: 16,
+    },
+    infoList: {
+        gap: 12,
+    },
+    infoItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 8,
     },
-    infoIconWrapper: {
+    infoIcon: {
         width: 40,
         height: 40,
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 10,
+        marginRight: 12,
     },
-    infoTextBlock: {
+    infoContent: {
         flex: 1,
     },
+    infoLabel: {
+        fontSize: 13,
+        color: '#6b7280',
+        marginBottom: 2,
+    },
     infoValue: {
-        fontSize: 14,
+        fontSize: 15,
+        fontWeight: '600',
         color: '#111827',
     },
 
-    /* Sección transacciones */
-    section: {
-        marginTop: 4,
-    },
-    sectionTitle: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#0f172a',
-    },
-    sectionSubtitle: {
-        fontSize: 12,
-        color: '#6b7280',
-    },
-    txList: {
+    /* Transacciones */
+    transactionsSection: {
         marginTop: 8,
-        gap: 8,
     },
-    txCard: {
+    sectionHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 10,
-        paddingHorizontal: 12,
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    sectionSubtitle: {
+        fontSize: 13,
+        color: '#6b7280',
+    },
+    transactionsList: {
+        gap: 8,
+    },
+    transactionCard: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 14,
         borderRadius: 12,
         backgroundColor: '#ffffff',
-        shadowColor: '#000000',
-        shadowOpacity: 0.03,
+        borderWidth: 1,
+        borderColor: '#f1f5f9',
+        shadowColor: '#000',
+        shadowOpacity: 0.05,
         shadowRadius: 4,
         shadowOffset: { width: 0, height: 2 },
-        elevation: 1,
+        elevation: 2,
     },
-    txLeft: {
+    transactionLeft: {
         flexDirection: 'row',
         flex: 1,
         alignItems: 'center',
     },
-    txIconCircle: {
+    transactionIcon: {
         width: 40,
         height: 40,
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 10,
+        marginRight: 12,
     },
-    txInfo: {
+    transactionInfo: {
         flex: 1,
     },
-    txDescription: {
+    transactionDesc: {
         fontSize: 14,
+        fontWeight: '500',
         color: '#111827',
+        marginBottom: 2,
     },
-    txDate: {
+    transactionDate: {
         fontSize: 12,
         color: '#6b7280',
     },
-    txRight: {
-        justifyContent: 'center',
-        alignItems: 'flex-end',
-    },
-    txAmount: {
-        fontSize: 14,
+    transactionAmount: {
+        fontSize: 15,
         fontWeight: '600',
         color: '#dc2626',
     },
 
-    /* Empty state transacciones */
+    /* Empty state */
     emptyCard: {
         alignItems: 'center',
-        paddingVertical: 28,
+        paddingVertical: 32,
+        paddingHorizontal: 24,
+        borderRadius: 16,
+        backgroundColor: '#f8fafc',
+        borderWidth: 1,
+        borderColor: '#e2e8f0',
     },
-    emptyIconCircle: {
+    emptyIcon: {
         width: 64,
         height: 64,
-        borderRadius: 999,
-        backgroundColor: '#f3f4f6',
+        borderRadius: 32,
+        backgroundColor: '#f1f5f9',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 12,
     },
     emptyTitle: {
-        fontSize: 14,
-        color: '#4b5563',
+        fontSize: 15,
+        fontWeight: '500',
+        color: '#475569',
         marginBottom: 4,
     },
     emptySubtitle: {
         fontSize: 13,
-        color: '#9ca3af',
+        color: '#94a3b8',
+        textAlign: 'center',
     },
 
-    /* Eliminar presupuesto */
-    deleteSection: {
-        marginTop: 16,
-        marginBottom: 8,
-    },
+    /* Eliminar */
     deleteButton: {
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: '#dc2626',
-        paddingVertical: 12,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        paddingVertical: 14,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#dc2626',
+        backgroundColor: 'rgba(239,68,68,0.05)',
+        marginTop: 8,
     },
-    deleteButtonText: {
-        fontSize: 14,
+    deleteIcon: {
+        marginRight: 8,
+    },
+    deleteText: {
+        fontSize: 15,
         fontWeight: '600',
         color: '#dc2626',
     },
 
-    /* Modal confirmación */
+    /* Modal */
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(15,23,42,0.35)',
+        backgroundColor: 'rgba(0,0,0,0.4)',
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 24,
     },
-    modalCard: {
-        width: '100%',
-        borderRadius: 16,
+    modalContent: {
         backgroundColor: '#ffffff',
-        padding: 18,
+        borderRadius: 16,
+        padding: 20,
+        width: '100%',
+        maxWidth: 340,
     },
     modalHeader: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 8,
-        gap: 8,
+        gap: 12,
+        marginBottom: 12,
     },
     modalTitle: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '600',
         color: '#111827',
     },
-    modalText: {
-        fontSize: 13,
-        color: '#4b5563',
-        marginBottom: 16,
+    modalDescription: {
+        fontSize: 14,
+        color: '#6b7280',
+        lineHeight: 20,
+        marginBottom: 20,
     },
-    modalButtonsRow: {
+    modalButtons: {
         flexDirection: 'row',
+        gap: 12,
         justifyContent: 'flex-end',
-        gap: 8,
     },
     modalCancel: {
-        paddingHorizontal: 14,
-        paddingVertical: 10,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#d1d5db',
     },
     modalCancelText: {
-        fontSize: 13,
+        fontSize: 14,
         color: '#374151',
+        fontWeight: '500',
     },
     modalDelete: {
-        paddingHorizontal: 14,
-        paddingVertical: 10,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
         borderRadius: 10,
         backgroundColor: '#dc2626',
     },
     modalDeleteText: {
-        fontSize: 13,
-        fontWeight: '600',
+        fontSize: 14,
         color: '#ffffff',
+        fontWeight: '600',
     },
 });

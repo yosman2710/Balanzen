@@ -6,13 +6,17 @@ import {
   updatePresupuestoController,
   getPresupuestosController,
   getPresupuestosByFechaController,
-  getPresupuestosByCategoriaController
+  getPresupuestosByCategoriaController,
+  getPresupuestoByIdController
 } from '../controllers/presupuestos.controller.js';
 
 const router = Router();
 
 // Crear presupuesto
 router.post('/', verifyToken, createPresupuestoController);
+
+// Buscar por id
+router.get('/:id_presupuesto', verifyToken, getPresupuestoByIdController);
 
 // Eliminar
 router.delete('/:id_presupuesto', verifyToken, deletePresupuestoController);

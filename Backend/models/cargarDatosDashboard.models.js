@@ -87,5 +87,6 @@ export const getRecentTransactions = async (userId) => {
   return rows.map((row) => ({
     ...row,
     amount: Number(row.amount),
+    date: new Date(row.date),
   }));
 };
