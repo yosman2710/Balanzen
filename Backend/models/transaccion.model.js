@@ -37,24 +37,24 @@ export const findTransaccionesByCategoriaNombre = async (nombre_categoria) => {
 };
 
 // Buscar transacciones por ID de categoría
-export const findTransaccionesByCategoriaId = async (id_categoria) => {
+export const findTransaccionesByCategoriaId = async (id_categoria, id_usuario) => {
   const query = `
     SELECT *
     FROM transacciones
-    WHERE id_categoria = ?
+    WHERE id_categoria = ? AND (id_usuario = ? OR id_usuario = 0)
     ORDER BY fecha DESC
   `;
-  const [rows] = await db.query(query, [id_categoria]);
+  const [rows] = await db.query(query, [id_categoria, id_usuario]);
   return rows;
 };
 
 // Buscar transacciones por tipo de categoría (ingreso/gasto)
-export const findTransaccionesByCategoriaTipo = async (tipo) => {
+export const findTransaccionesByCategoriaTipo = async (tipo, id_usuario) => {
   const query = `
     SELECT t.*
     FROM transacciones t
     JOIN categorias c ON t.id_categoria = c.id_categoria
-    WHERE c.tipo = ?
+    WHERE c.tipo = ? AND t.id_usuario = ?
   `;
   const [rows] = await db.query(query, [tipo]); // tipo debe ser 'ingreso' o 'gasto'
   return rows;

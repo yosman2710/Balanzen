@@ -16,11 +16,11 @@ function DashboardWrapper() {
     const navigation = useNavigation<RootNav>();
 
     const handleAddIncome = () => {
-        navigation.navigate('AddTransaction', { defaultType: 'income' });
+        navigation.navigate('AddTransaction', { defaultType: 'ingreso' });
     };
 
     const handleAddExpense = () => {
-        navigation.navigate('AddTransaction', { defaultType: 'expense' });
+        navigation.navigate('AddTransaction', { defaultType: 'gasto' });
     };
 
     return (

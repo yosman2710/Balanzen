@@ -36,6 +36,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navegation/type';
 import { getCategoryById, type CategoryDTO } from '../api/categories';
 import { getTransactionsByCategory } from '../api/transacciones';
+import { iconMap } from '../component/IconMapper';
+
 
 type CategoryDetailRouteProp = RouteProp<RootStackParamList, 'CategoryDetail'>;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -80,27 +82,6 @@ export const CategoryDetailScreen: React.FC = () => {
     }, [loadData]);
 
 
-    const iconMap: Record<string, React.ComponentType<any>> = {
-        ShoppingCart,
-        Home,
-        Car,
-        Coffee,
-        Zap,
-        Heart,
-        BookOpen,
-        Smartphone,
-        Shirt,
-        Film,
-        Dumbbell,
-        Gift,
-        Plane,
-        Utensils,
-        Fuel,
-        Wrench,
-        TrendingUp,
-        Briefcase,
-        LineChart,
-    };
 
     const IconForCategory = category ? (iconMap[category.icon] ?? ShoppingCart) : ShoppingCart;
 

@@ -29,8 +29,18 @@ export const getCategoriasByNameService = async (nombre, id_usuario) =>
   await getCategoriasByName(nombre, id_usuario);
 
 // Buscar por id: solo si pertenece al usuario o es predeterminada
-export const getCategoriaByIdService = async (id_categoria, id_usuario) =>
-  await getCategoriaById(id_categoria, id_usuario);
+export const getCategoriaByIdService = async (id_categoria, id_usuario) => {
+  const categoria = await getCategoriaById(id_categoria, id_usuario);
+  if (!categoria) return null;
+  return {
+    id: categoria.id_categoria,
+    name: categoria.nombre_categoria,
+    icon: categoria.icon,
+    color: categoria.color,
+    type: categoria.tipo,
+    isDefault: categoria.es_predeterminada
+  };
+};
 
 // Buscar por tipo: muestra predeterminadas y del usuario
 export const getCategoriasUserService = async (id_usuario) => {

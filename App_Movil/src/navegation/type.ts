@@ -2,7 +2,7 @@ export type RootStackParamList = {
     MainTabs: undefined;
     Register: undefined;
     Login: undefined;
-    AddTransaction: { defaultType: 'income' | 'expense' };
+    AddTransaction: { defaultType: 'ingreso' | 'gasto' };
     AddBudget: undefined;
     BudgetDetail: {
         budget: {

@@ -6,7 +6,8 @@ import { styles } from '../styles/dashboard.style';
 
 interface Transaction {
     id: string;
-    type: 'income' | 'expense';
+    type: 'ingreso' | 'gasto';
+    name: string;
     description: string;
     amount: number;
     category: string;
@@ -23,7 +24,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
     onSeeAll,
 }) => {
     const renderItem = ({ item }: { item: Transaction }) => {
-        const isIncome = item.type === 'income';
+        const isIncome = item.type === 'ingreso';
         const amountColor = isIncome ? styles.txAmountIncome : styles.txAmountExpense;
         const iconContainerStyle = isIncome
             ? styles.txIconIncome
@@ -41,7 +42,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
                             )}
                         </View>
                         <View>
-                            <Text style={styles.txDescription}>{item.description}</Text>
+                            <Text style={styles.txDescription}>{item.name}</Text>
                             <Text style={styles.txCategory}>{item.category}</Text>
                         </View>
                     </View>

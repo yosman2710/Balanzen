@@ -22,13 +22,13 @@ import { styles } from '../styles/AddTransactionScreen.style';
 import { getCategories, type CategoryDTO } from '../api/categories';
 import { createTransaction } from '../api/transacciones';
 
-type TransactionType = 'income' | 'expense';
+type TransactionType = 'ingreso' | 'gasto';
 
 export const AddTransactionScreen: React.FC = () => {
     const navigation = useNavigation<any>();
     const route = useRoute<any>();
 
-    const defaultType: TransactionType = route.params?.defaultType ?? 'expense';
+    const defaultType: TransactionType = route.params?.defaultType ?? 'gasto';
 
     const [type, setType] = useState<TransactionType>(defaultType);
     const [amount, setAmount] = useState('');
@@ -128,7 +128,7 @@ export const AddTransactionScreen: React.FC = () => {
 
                 <Text style={styles.headerTitle}>Nueva Transacción</Text>
                 <Text style={styles.headerSubtitle}>
-                    Registra un {type === 'income' ? 'ingreso' : 'gasto'}
+                    Registra un {type === 'ingreso' ? 'ingreso' : 'gasto'}
                 </Text>
             </View>
 
@@ -143,18 +143,18 @@ export const AddTransactionScreen: React.FC = () => {
                     <View style={styles.tabsRow}>
                         <TouchableOpacity
                             onPress={() => {
-                                setType('income');
+                                setType('ingreso');
                                 setCategoryId(''); // Resetear categoría al cambiar tipo
                             }}
                             style={[
                                 styles.tab,
-                                type === 'income' && styles.tabActiveIncome,
+                                type === 'ingreso' && styles.tabActiveIncome,
                             ]}
                         >
                             <Text
                                 style={[
                                     styles.tabText,
-                                    type === 'income' && styles.tabTextActive,
+                                    type === 'ingreso' && styles.tabTextActive,
                                 ]}
                             >
                                 Ingreso
@@ -162,18 +162,18 @@ export const AddTransactionScreen: React.FC = () => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => {
-                                setType('expense');
+                                setType('gasto');
                                 setCategoryId('');
                             }}
                             style={[
                                 styles.tab,
-                                type === 'expense' && styles.tabActiveExpense,
+                                type === 'gasto' && styles.tabActiveExpense,
                             ]}
                         >
                             <Text
                                 style={[
                                     styles.tabText,
-                                    type === 'expense' && styles.tabTextActive,
+                                    type === 'gasto' && styles.tabTextActive,
                                 ]}
                             >
                                 Gasto
@@ -215,7 +215,7 @@ export const AddTransactionScreen: React.FC = () => {
                         />
                         <TextInput
                             placeholder={
-                                type === 'income'
+                                type === 'ingreso'
                                     ? 'Ej: Salario mensual'
                                     : 'Ej: Compra en supermercado'
                             }
@@ -315,7 +315,7 @@ export const AddTransactionScreen: React.FC = () => {
                         onPress={handleSubmit}
                         style={[
                             styles.button,
-                            type === 'income' ? styles.buttonIncome : styles.buttonExpense,
+                            type === 'ingreso' ? styles.buttonIncome : styles.buttonExpense,
                             submitting && { opacity: 0.7 }
                         ]}
                         activeOpacity={0.85}
@@ -346,7 +346,7 @@ export const AddTransactionScreen: React.FC = () => {
                         <ScrollView style={{ maxHeight: 300 }}>
                             {filteredCategories.length === 0 ? (
                                 <Text style={{ textAlign: 'center', color: '#666', padding: 20 }}>
-                                    No hay categorías disponibles para {type === 'income' ? 'ingresos' : 'gastos'}.
+                                    No hay categorías disponibles para {type === 'ingreso' ? 'ingresos' : 'gastos'}.
                                 </Text>
                             ) : (
                                 filteredCategories.map(cat => (

@@ -48,13 +48,26 @@ export const getTransaccionesByCategoriaNombreService = async (nombre_categoria)
 };
 
 // Buscar transacciones por ID de categoría
-export const getTransaccionesByCategoriaIdService = async (id_categoria) => {
-    return await findTransaccionesByCategoriaId(id_categoria);
+export const getTransaccionesByCategoriaIdService = async (id_categoria, id_usuario) => {
+    const transactions = await findTransaccionesByCategoriaId(id_categoria, id_usuario);
+    return transactions.map(transaction => {
+        const fecha = new Date(transaction.fecha);
+        return {
+            id_transaccion: transaction.id_transaccion,
+            id_usuario: transaction.id_usuario,
+            id_categoria: transaction.id_categoria,
+            nombre_transaccion: transaction.nombre_transaccion,
+            monto: Number(transaction.monto),
+            fecha: fecha.toISOString().split('T')[0],
+            descripcion: transaction.descripcion,
+            icon: transaction.icon,
+        };
+    });
 };
 
 // Buscar transacciones por tipo de categoría
-export const getTransaccionesByCategoriaTipoService = async (tipo) => {
-    return await findTransaccionesByCategoriaTipo(tipo);
+export const getTransaccionesByCategoriaTipoService = async (tipo, id_usuario) => {
+    return await findTransaccionesByCategoriaTipo(tipo, id_usuario);
 };
 
 // Buscar transacciones por nombre de transacción
@@ -91,7 +104,6 @@ export const getTransaccionesUserService = async (id_usuario) => {
             amount: Number(transaction.monto),
             category: transaction.nombre_categoria,
             date: fecha.toISOString().split('T')[0],
-            icon: transaction.icon,
         };
 
     });

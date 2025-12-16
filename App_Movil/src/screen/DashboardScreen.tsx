@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     View,
@@ -7,9 +7,8 @@ import {
     Dimensions,
     ActivityIndicator,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import {
-    TrendingUp,
-    ArrowDownRight,
     Plus
 } from 'lucide-react-native';
 import { LineChart } from 'react-native-chart-kit';
@@ -25,7 +24,8 @@ import { getDashboardResumen, getDashboardMetaAhorro } from '../api/dashboard'; 
 
 interface Transaction {
     id: string;
-    type: 'income' | 'expense';
+    type: 'ingreso' | 'gasto';
+    name: string;
     description: string;
     amount: number;
     category: string;
@@ -54,71 +54,74 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
 
     const currentMonth = new Date().toLocaleDateString('es-ES', { month: 'long' });
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                // 1. Obtener Resumen Dashboard
-                // getDashboardResumen devuelve la data directamente (sin envoltorio "data" extra)
-                const data = await getDashboardResumen();
+    const fetchData = useCallback(async () => {
+        try {
+            setLoading(true);
+            // 1. Obtener Resumen Dashboard
+            // getDashboardResumen devuelve la data directamente (sin envoltorio "data" extra)
+            const data = await getDashboardResumen();
 
-                setMonthIncome(Number(data.ingresosMes));
-                setMonthExpenses(Number(data.gastosMes));
-                setIncomeChange(Number(data.incomeChange || 0));
-                setExpenseChange(Number(data.expenseChange || 0));
+            setMonthIncome(Number(data.ingresosMes));
+            setMonthExpenses(Number(data.gastosMes));
+            setIncomeChange(Number(data.incomeChange || 0));
+            setExpenseChange(Number(data.expenseChange || 0));
 
-                // Generar los últimos 5 meses
-                const last5MonthsLabels: string[] = [];
-                const last5MonthsValues: number[] = [];
+            // Generar los últimos 5 meses
+            const last5MonthsLabels: string[] = [];
+            const last5MonthsValues: number[] = [];
 
-                for (let i = 4; i >= 0; i--) {
-                    const date = new Date();
-                    date.setDate(1);
-                    date.setMonth(date.getMonth() - i);
+            for (let i = 4; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(1);
+                date.setMonth(date.getMonth() - i);
 
-                    const year = date.getFullYear();
-                    const month = String(date.getMonth() + 1).padStart(2, '0');
-                    const key = `${year}-${month}`;
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const key = `${year}-${month}`;
 
-                    const monthData = data.monthly.find((m: any) => m.mes === key);
-                    const value = monthData ? (Number(monthData.ingresos) - Number(monthData.gastos)) : 0;
+                const monthData = data.monthly.find((m: any) => m.mes === key);
+                const value = monthData ? (Number(monthData.ingresos) - Number(monthData.gastos)) : 0;
 
-                    const monthName = date.toLocaleDateString('es-ES', { month: 'short' });
-                    const capitalizedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                const monthName = date.toLocaleDateString('es-ES', { month: 'short' });
+                const capitalizedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
-                    last5MonthsLabels.push(capitalizedMonth);
-                    last5MonthsValues.push(value);
-                }
-
-                setMonthlyData({
-                    labels: last5MonthsLabels,
-                    datasets: [{ data: last5MonthsValues }],
-                });
-
-                setRecentTransactions(data.recent);
-
-                // 2. Obtener Meta de Ahorro (Manejo de error independiente 404)
-                try {
-                    const metaData = await getDashboardMetaAhorro();
-                    setSavingsGoal(metaData);
-                } catch (metaErr: any) {
-                    if (metaErr.response && metaErr.response.status === 404) {
-                        setSavingsGoal(null);
-                    } else {
-                        console.log('Error meta ahorro:', metaErr);
-                    }
-                }
-
-            } catch (err: any) {
-                console.error("Error cargando dashboard:", err);
-                setError(err?.response?.data?.error || 'Error cargando dashboard');
-            } finally {
-                setLoading(false);
+                last5MonthsLabels.push(capitalizedMonth);
+                last5MonthsValues.push(value);
             }
-        };
 
-        fetchData();
+            setMonthlyData({
+                labels: last5MonthsLabels,
+                datasets: [{ data: last5MonthsValues }],
+            });
+
+            setRecentTransactions(data.recent);
+
+            // 2. Obtener Meta de Ahorro (Manejo de error independiente 404)
+            try {
+                const metaData = await getDashboardMetaAhorro();
+                setSavingsGoal(metaData);
+            } catch (metaErr: any) {
+                if (metaErr.response && metaErr.response.status === 404) {
+                    setSavingsGoal(null);
+                } else {
+                    console.log('Error meta ahorro:', metaErr);
+                }
+            }
+
+        } catch (err: any) {
+            console.error("Error cargando dashboard:", err);
+            setError(err?.response?.data?.error || 'Error cargando dashboard');
+        } finally {
+            setLoading(false);
+        }
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchData();
+        }, [fetchData])
+    );
+
 
     const monthBalance = monthIncome - monthExpenses;
 

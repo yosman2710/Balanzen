@@ -81,7 +81,7 @@ export const getMonthlyIncomeExpenses = async (userId) => {
 // Obtiene últimas 3 transacciones con formato de fecha
 export const getRecentTransactions = async (userId) => {
   const query = `
-    SELECT t.id_transaccion AS id, c.tipo AS type, c.nombre_categoria AS category, t.monto AS amount, t.fecha AS date, t.descripcion AS description FROM transacciones t JOIN categorias c ON t.id_categoria = c.id_categoria WHERE t.id_usuario = ?  ORDER BY t.fecha DESC LIMIT 3;
+    SELECT t.id_transaccion AS id, c.tipo AS type, c.nombre_categoria AS category, t.monto AS amount, t.fecha AS date, t.descripcion AS description, t.nombre_transaccion AS name FROM transacciones t JOIN categorias c ON t.id_categoria = c.id_categoria WHERE t.id_usuario = ?  ORDER BY t.fecha DESC LIMIT 3;
   `;
   const [rows] = await db.query(query, [userId]);
   return rows.map((row) => ({

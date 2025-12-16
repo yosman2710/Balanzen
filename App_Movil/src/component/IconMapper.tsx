@@ -44,7 +44,8 @@ import {
     TrendingDown,
     Activity,
     LucideIcon,
-    LucideProps
+    LucideProps,
+    House
 } from 'lucide-react-native';
 
 export const iconMap: Record<string, LucideIcon> = {
@@ -90,7 +91,8 @@ export const iconMap: Record<string, LucideIcon> = {
     Wallet,
     Percent,
     ArrowRightLeft,
-    Activity
+    Activity,
+    House
 };
 
 interface IconByNameProps extends LucideProps {

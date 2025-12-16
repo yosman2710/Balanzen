@@ -94,6 +94,7 @@ export const CategoriesScreen: React.FC = () => {
     };
 
     const handleViewCategory = (categoryId: string) => {
+        console.log('handleViewCategory', categoryId);
         navigation.navigate('CategoryDetail', { categoryId });
     };
 
@@ -123,7 +124,7 @@ export const CategoriesScreen: React.FC = () => {
                             style={styles.addButton}
                             activeOpacity={0.8}
                         >
-                            <Plus size={18} color="#ffffff" />
+                            <Plus size={18} color="#059669" />
                             <Text style={styles.addButtonText}>Nueva</Text>
                         </TouchableOpacity>
                     </View>
@@ -206,7 +207,7 @@ export const CategoriesScreen: React.FC = () => {
                                 <Text style={styles.emptyText}>
                                     No se encontraron categorías
                                 </Text>
-                                {searchQuery && (
+                                {!!searchQuery && (
                                     <TouchableOpacity
                                         onPress={() => setSearchQuery('')}
                                         style={styles.clearButton}
@@ -241,13 +242,12 @@ export const CategoriesScreen: React.FC = () => {
                         <Text style={styles.alertDescription}>
                             ¿Estás seguro de eliminar "{categoryToDelete?.name}"?
                         </Text>
-                        {categoryToDelete?.transactionCount &&
-                            categoryToDelete.transactionCount > 0 && (
-                                <Text style={styles.alertWarning}>
-                                    ⚠️ Esta categoría tiene {categoryToDelete.transactionCount}{' '}
-                                    transacciones asociadas.
-                                </Text>
-                            )}
+                        {(categoryToDelete?.transactionCount ?? 0) > 0 && (
+                            <Text style={styles.alertWarning}>
+                                ⚠️ Esta categoría tiene {categoryToDelete?.transactionCount}{' '}
+                                transacciones asociadas.
+                            </Text>
+                        )}
                         <View style={styles.alertButtons}>
                             <TouchableOpacity
                                 onPress={() => setCategoryToDelete(null)}
@@ -301,7 +301,7 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
             <View style={styles.categoryInfo}>
                 <View style={styles.categoryHeader}>
                     <Text style={styles.categoryName}>{category.name}</Text>
-                    {category.isDefault && (
+                    {!!category.isDefault && (
                         <Text style={styles.defaultBadge}>Predet.</Text>
                     )}
                 </View>

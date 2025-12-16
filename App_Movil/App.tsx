@@ -9,6 +9,7 @@ import { AddTransactionWrapper } from "./src/Wrapper/AddTransactionWrapper";
 import { AddBudgetWrapper } from "./src/Wrapper/AddBudgetWrapper";
 import { AddCategoryWrapper } from "./src/Wrapper/AddCategoriesWrapper";
 import { CategoriesWrapper } from "./src/Wrapper/CategoriesWrapper";
+import { CategoryDetailScreen } from "./src/screen/CategoryDetailsScreen";
 import { LogBox } from 'react-native';
 
 LogBox.ignoreLogs([
@@ -33,6 +34,7 @@ export default function App() {
         <Stack.Screen name="AddBudget" component={AddBudgetWrapper} options={{ headerShown: false }} />
         <Stack.Screen name="AddCategory" component={AddCategoryWrapper} options={{ headerShown: false }} />
         <Stack.Screen name="Categories" component={CategoriesWrapper} options={{ headerShown: false }} />
+        <Stack.Screen name="CategoryDetail" component={CategoryDetailScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

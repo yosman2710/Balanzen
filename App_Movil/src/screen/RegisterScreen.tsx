@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { ArrowLeft, User, Mail, Lock, Eye, EyeOff, Calendar, Globe, Users } from 'lucide-react-native';
 import { styles } from '../styles/register.style';
-import { SuccessModal } from '../components/SuccessModal';
+import { SuccessModal } from '../component/SuccessModal';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from '../navegation/type';

@@ -51,7 +51,8 @@ export const deleteTransaccion = async (req, res) => {
 export const getTransaccionesByCategoriaId = async (req, res) => {
     try {
         const { id_categoria } = req.params;
-        const transacciones = await getTransaccionesByCategoriaIdService(id_categoria);
+        const userId = req.user.userId;
+        const transacciones = await getTransaccionesByCategoriaIdService(id_categoria, userId);
         res.json(transacciones);
     } catch (err) {
         res.status(err.status || 500).json({ error: err.message });
