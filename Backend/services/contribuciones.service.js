@@ -1,7 +1,7 @@
 import { createContribucion, getContribucionesByMeta, deleteContribucion } from '../models/contribuciones.model.js';
 
-export const createContribucionService = async (data) => {
-    return await createContribucion(data);
+export const createContribucionService = async (userId, id_meta, amount, note) => {
+    return await createContribucion(userId, id_meta, amount, note);
 };
 
 export const getContribucionesByMetaService = async (id_meta) => {

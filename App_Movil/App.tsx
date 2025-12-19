@@ -11,6 +11,8 @@ import { AddCategoryWrapper } from "./src/Wrapper/AddCategoriesWrapper";
 import { CategoriesWrapper } from "./src/Wrapper/CategoriesWrapper";
 import { CategoryDetailScreen } from "./src/screen/CategoryDetailsScreen";
 import { BudgetDetailWrapper } from "./src/Wrapper/BudgetDetailWrapper";
+import { AddSavingsGoalWrapper } from "./src/Wrapper/AddSavingsGoalWrapper";
+import { SavingsGoalDetailWrapper } from "./src/Wrapper/SavingsGoalDetailWrapper";
 import { LogBox } from 'react-native';
 
 LogBox.ignoreLogs([
@@ -37,6 +39,8 @@ export default function App() {
         <Stack.Screen name="Categories" component={CategoriesWrapper} options={{ headerShown: false }} />
         <Stack.Screen name="CategoryDetail" component={CategoryDetailScreen} options={{ headerShown: false }} />
         <Stack.Screen name="BudgetDetail" component={BudgetDetailWrapper} options={{ headerShown: false }} />
+        <Stack.Screen name="AddSavingsGoal" component={AddSavingsGoalWrapper} options={{ headerShown: false }} />
+        <Stack.Screen name="SavingsGoalDetail" component={SavingsGoalDetailWrapper} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

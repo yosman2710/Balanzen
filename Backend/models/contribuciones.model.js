@@ -1,12 +1,12 @@
 import db from "../db.js";
 
 // Crear contribucion
-export const createContribucion = async ({ id_usuario, id_meta, monto, descripcion, fecha }) => {
+export const createContribucion = async (id_usuario, id_meta, monto, descripcion) => {
     const query = `
     INSERT INTO contribuciones (id_usuario, id_meta, monto, descripcion, fecha)
-    VALUES (?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, NOW())
   `;
-    const [result] = await db.query(query, [id_usuario, id_meta, monto, descripcion, fecha]);
+    const [result] = await db.query(query, [id_usuario, id_meta, monto, descripcion]);
     return result.insertId;
 };
 

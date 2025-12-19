@@ -20,7 +20,7 @@ export const deleteMetaAhorro = async (id_usuario, id_meta) => {
 export const findMetaAhorroById = async (id_usuario, id_meta) => {
   const query = `SELECT * FROM meta_ahorro WHERE id_meta = ? AND id_usuario = ?`;
   const [rows] = await db.query(query, [id_meta, id_usuario]);
-  return rows[0];
+  return rows;
 };
 
 // Buscar metas de ahorro por usuario
@@ -43,7 +43,7 @@ export const updateMetaAhorro = async (id_usuario, id_meta, { nombre_meta, descr
 
 export const getMetaAhorroDashboard = async (id_usuario) => {
   const query = `
-    SELECT nombre_meta, monto_actual, monto_objetivo, fecha_creacion
+    SELECT id_meta, nombre_meta, monto_actual, monto_objetivo, fecha_creacion
     FROM meta_ahorro
     WHERE id_usuario = ?
     ORDER BY fecha_creacion DESC
@@ -54,10 +54,35 @@ export const getMetaAhorroDashboard = async (id_usuario) => {
 
   const meta = rows[0];
   return {
+    id: meta.id_meta,
     name: meta.nombre_meta,
-    current: Number(meta.monto_actual),
-    target: Number(meta.monto_objetivo),
-    percentage: Number(((meta.monto_actual / meta.monto_objetivo) * 100).toFixed(2)),
+    currentAmount: Number(meta.monto_actual),
+    targetAmount: Number(meta.monto_objetivo),
     createdAt: meta.fecha_creacion,
   };
 };
+
+
+export const createContribucionMeta = async (id_usuario, id_meta, monto) => {
+  const query = `
+    INSERT INTO contribucion_meta (id_usuario, id_meta, monto)
+    VALUES (?, ?, ?)
+  `;
+  const [result] = await db.query(query, [id_usuario, id_meta, monto]);
+  return result.insertId;
+};
+
+export const deleteContribucionMeta = async (id_usuario, id_meta, id_contribucion) => {
+  const query = `DELETE FROM contribucion_meta WHERE id_contribucion = ? AND id_meta = ? AND id_usuario = ?`;
+  const [result] = await db.query(query, [id_contribucion, id_meta, id_usuario]);
+  return result.affectedRows > 0;
+};
+
+export const updateContribucionMeta = async (id_usuario, id_meta, id_contribucion, monto) => {
+  const query = `
+    UPDATE contribucion_meta SET monto = ?
+    WHERE id_contribucion = ? AND id_meta = ? AND id_usuario = ?
+  `;
+  const [result] = await db.query(query, [monto, id_contribucion, id_meta, id_usuario]);
+  return result.affectedRows > 0;
+};  

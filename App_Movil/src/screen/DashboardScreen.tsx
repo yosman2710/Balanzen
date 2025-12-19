@@ -6,10 +6,12 @@ import {
     Text,
     Dimensions,
     ActivityIndicator,
+    TouchableOpacity
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import {
-    Plus
+    Plus,
+    Target
 } from 'lucide-react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Button } from '../component/ui/Button';
@@ -20,7 +22,10 @@ import { BalanceCard } from '../component/BalanceCard';
 import { SavingsGoalCard } from '../component/SavingsGoalCard';
 import { RecentTransactions } from '../component/RecentTransactions';
 import { styles } from '../styles/dashboard.style';
-import { getDashboardResumen, getDashboardMetaAhorro } from '../api/dashboard'; // 👈 tu cliente axios con interceptor
+import { getDashboardResumen, getDashboardMetaAhorro } from '../api/dashboard';
+import { LinearGradient } from 'expo-linear-gradient';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navegation/type';
 
 interface Transaction {
     id: string;
@@ -37,7 +42,11 @@ interface DashboardProps {
     onAddExpense: () => void;
 }
 
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
 export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
+    const navigation = useNavigation<NavigationProp>();
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -57,8 +66,6 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
-            // 1. Obtener Resumen Dashboard
-            // getDashboardResumen devuelve la data directamente (sin envoltorio "data" extra)
             const data = await getDashboardResumen();
 
             setMonthIncome(Number(data.ingresosMes));
@@ -66,7 +73,6 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
             setIncomeChange(Number(data.incomeChange || 0));
             setExpenseChange(Number(data.expenseChange || 0));
 
-            // Generar los últimos 5 meses
             const last5MonthsLabels: string[] = [];
             const last5MonthsValues: number[] = [];
 
@@ -96,7 +102,6 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
 
             setRecentTransactions(data.recent);
 
-            // 2. Obtener Meta de Ahorro (Manejo de error independiente 404)
             try {
                 const metaData = await getDashboardMetaAhorro();
                 setSavingsGoal(metaData);
@@ -105,6 +110,7 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
                     setSavingsGoal(null);
                 } else {
                     console.log('Error meta ahorro:', metaErr);
+                    setSavingsGoal(null);
                 }
             }
 
@@ -131,7 +137,6 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
-                {/* Tarjetas principales */}
                 <View style={styles.cardsContainer}>
                     <IncomeCard
                         amount={monthIncome}
@@ -148,7 +153,6 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
                     />
                 </View>
 
-                {/* Acciones rápidas */}
                 <View style={styles.actionsGrid}>
                     <Button
                         style={styles.primaryButton}
@@ -166,10 +170,58 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
                     </Button>
                 </View>
 
-                {/* Meta de ahorro */}
-                {savingsGoal && <SavingsGoalCard goal={savingsGoal} />}
+                {savingsGoal ? (
+                    <SavingsGoalCard
+                        goal={savingsGoal}
+                        onPress={() => navigation.navigate('SavingsGoalDetail', { id: savingsGoal.id })}
+                    />
+                ) : (
+                    <TouchableOpacity
+                        activeOpacity={0.9}
+                        onPress={() => navigation.navigate('AddSavingsGoal')}
+                        style={{ marginHorizontal: 24, marginBottom: 24 }}
+                    >
+                        <Card style={{
+                            padding: 0,
+                            overflow: 'hidden',
+                            borderColor: '#ddd6fe',
+                            borderWidth: 1,
+                            borderRadius: 16
+                        }}>
+                            <LinearGradient
+                                colors={['#f5f3ff', '#faf5ff']}
+                                style={{ padding: 20 }}
+                            >
+                                <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                                        <View style={{
+                                            width: 40,
+                                            height: 40,
+                                            borderRadius: 12,
+                                            backgroundColor: '#ede9fe',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}>
+                                            <Target size={20} color="#7c3aed" />
+                                        </View>
+                                        <View>
+                                            <Text style={{ fontSize: 16, fontWeight: '600', color: '#0f172a' }}>
+                                                No tienes metas de ahorro
+                                            </Text>
+                                            <Text style={{ fontSize: 14, color: '#475569' }}>
+                                                Crea una nueva meta de ahorro
+                                            </Text>
+                                        </View>
+                                    </View>
+                                    <Text style={{ color: '#7c3aed', fontSize: 14, fontWeight: '500' }}>
+                                        Crear meta
+                                    </Text>
+                                </View>
+                            </LinearGradient>
+                        </Card>
+                    </TouchableOpacity>
+                )}
 
-                {/* Gráfica */}
                 <Card style={styles.chartCard}>
                     <View style={styles.chartHeader}>
                         <Text style={styles.chartTitle}>Balance Últimos 5 Meses</Text>
@@ -191,7 +243,6 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
                     />
                 </Card>
 
-                {/* Transacciones recientes */}
                 <RecentTransactions transactions={recentTransactions} />
             </ScrollView>
         </SafeAreaView>

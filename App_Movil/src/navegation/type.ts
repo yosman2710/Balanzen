@@ -9,4 +9,6 @@ export type RootStackParamList = {
     Categories: undefined;     // ← NUEVO
     CategoryDetail: { categoryId: string };
     AddCategory: undefined;
+    AddSavingsGoal: undefined;
+    SavingsGoalDetail: { id: string };
 };
