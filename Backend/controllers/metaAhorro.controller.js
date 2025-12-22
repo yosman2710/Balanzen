@@ -21,8 +21,8 @@ export const getMetaAhorroDashboardController = async (req, res) => {
 export const createMetaAhorroController = async (req, res) => {
     try {
         const userId = req.user.userId;
-        const { nombre_meta, descripcion_meta, monto_objetivo } = req.body;
-        const id = await createMetaAhorroService(userId, nombre_meta, descripcion_meta, monto_objetivo);
+        const { name, description, deadline, targetAmount } = req.body;
+        const id = await createMetaAhorroService(userId, name, description, deadline, targetAmount);
         res.status(201).json({ id });
     } catch (error) {
         console.error('Error al crear la meta:', error);

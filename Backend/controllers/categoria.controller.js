@@ -8,9 +8,10 @@ import {
 
 export const createCategoriaController = async (req, res) => {
   try {
-    const { nombre_categoria, tipo, color, icon } = req.body;
+    const { name, type, color, icon } = req.body;
+    console.log(req.body);
     const userId = req.user.userId;
-    const id = await createCategoriaService(nombre_categoria, tipo, userId, color, icon);
+    const id = await createCategoriaService(name, type, userId, color, icon);
     res.status(201).json({ id });
   } catch (err) {
     res.status(400).json({ error: err.message });

@@ -1,11 +1,11 @@
 import db from "../db.js";
 // Crear meta de ahorro
-export const createMetaAhorro = async (id_usuario, nombre_meta, descripcion_meta, monto_objetivo) => {
+export const createMetaAhorro = async (id_usuario, nombre_meta, descripcion_meta, fecha_limite, monto_objetivo) => {
   const query = `
-    INSERT INTO meta_ahorro (id_usuario, nombre_meta, descripcion_meta, monto_actual, monto_objetivo, fecha_creacion)
+    INSERT INTO meta_ahorro (id_usuario, nombre_meta, descripcion_meta, fecha_limite, monto_objetivo, fecha_creacion)
     VALUES (?, ?, ?, ?, ?, NOW())
   `;
-  const [result] = await db.query(query, [id_usuario, nombre_meta, descripcion_meta, 0, monto_objetivo]);
+  const [result] = await db.query(query, [id_usuario, nombre_meta, descripcion_meta, fecha_limite, monto_objetivo]);
   return result.insertId;
 };
 

@@ -22,7 +22,7 @@ interface AddCategoryScreenProps {
         name: string;
         icon: string;
         color: string;
-        type: 'income' | 'expense';
+        type: 'ingreso' | 'gasto';
     }) => void;
 }
 
@@ -33,7 +33,7 @@ export const AddCategoryScreen: React.FC<AddCategoryScreenProps> = ({
     const [name, setName] = useState('');
     const [selectedIcon, setSelectedIcon] = useState('');
     const [selectedColor, setSelectedColor] = useState('');
-    const [type, setType] = useState<'income' | 'expense'>('expense');
+    const [type, setType] = useState<'ingreso' | 'gasto'>('gasto');
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const iconOptions = [
@@ -95,7 +95,7 @@ export const AddCategoryScreen: React.FC<AddCategoryScreenProps> = ({
         }
     }
 
-    const typeLabels = { income: 'Ingreso', expense: 'Gasto' };
+    const typeLabels = { ingreso: 'Ingreso', gasto: 'Gasto' };
 
     // ✅ FIX VISTA PREVIA - Encuentra el ícono correcto
     const SelectedIcon = iconOptions.find(i => i.name === selectedIcon)?.Icon;
@@ -132,7 +132,7 @@ export const AddCategoryScreen: React.FC<AddCategoryScreenProps> = ({
                 <View style={styles.field}>
                     <Text style={styles.label}>Tipo</Text>
                     <View style={styles.typeButtons}>
-                        {(['income', 'expense'] as const).map(t => (
+                        {(['ingreso', 'gasto'] as const).map(t => (
                             <TouchableOpacity
                                 key={t}
                                 onPress={() => setType(t)}

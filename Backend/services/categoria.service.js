@@ -8,13 +8,13 @@ import {
 
 // Regla de negocio: no permitir duplicados personalizados para el mismo usuario
 // Regla de negocio: no permitir duplicados personalizados para el mismo usuario
-export const createCategoriaService = async (nombre_categoria, tipo, id_usuario, color, icon) => {
-  const tipoBD = tipo === "income" ? "ingreso" : "gasto";
-  const found = await getCategoriasByName(nombre_categoria, id_usuario);
-  if (found.some(cat => cat.nombre_categoria === nombre_categoria && cat.id_usuario === id_usuario)) {
+export const createCategoriaService = async (name, type, id_usuario, color, icon) => {
+  const tipoBD = type === "ingreso" ? "ingreso" : "gasto";
+  const found = await getCategoriasByName(name, id_usuario);
+  if (found.some(cat => cat.nombre_categoria === name && cat.id_usuario === id_usuario)) {
     throw new Error("Ya existe una categoría personalizada con ese nombre.");
   }
-  return await insertCategoria(nombre_categoria, tipoBD, id_usuario, color, icon, false);
+  return await insertCategoria(name, tipoBD, id_usuario, color, icon, false);
 };
 
 // Eliminar solo si NO es predeterminada y es del usuario. Regla de negocio: no eliminar predeterminada

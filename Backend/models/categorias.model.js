@@ -46,15 +46,17 @@ export const getCategoriaById = async (id_categoria, id_usuario) => {
 export const getCategoriasUser = async (id_usuario) => {
   const query = `
     SELECT 
-    c.*,
-    COUNT(t.id_transaccion) AS transactionCount
-FROM categorias c
-LEFT JOIN transacciones t 
-    ON c.id_categoria = t.id_categoria 
-    AND (t.id_usuario = ? OR c.es_predeterminada = 1)
-GROUP BY c.id_categoria;
+      c.*,
+      COUNT(t.id_transaccion) AS transactionCount
+    FROM categorias c
+    LEFT JOIN transacciones t 
+      ON c.id_categoria = t.id_categoria
+      AND t.id_usuario = ?
+    WHERE c.es_predeterminada = 1 
+       OR c.id_usuario = ?
+    GROUP BY c.id_categoria;
   `;
-  const [rows] = await db.query(query, [id_usuario]);
+  const [rows] = await db.query(query, [id_usuario, id_usuario]);
   return rows;
 };
 

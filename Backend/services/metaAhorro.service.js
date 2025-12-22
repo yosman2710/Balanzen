@@ -8,8 +8,8 @@ export const getMetaAhorroDashboardService = async (userId) => {
     return await getMetaAhorroDashboard(userId);
 };
 
-export const createMetaAhorroService = async (userId, nombre_meta, descripcion_meta, monto_objetivo) => {
-    return await createMetaAhorro(userId, nombre_meta, descripcion_meta, monto_objetivo);
+export const createMetaAhorroService = async (userId, name, description, deadline, targetAmount) => {
+    return await createMetaAhorro(userId, name, description, deadline, targetAmount);
 };
 
 export const deleteMetaAhorroService = async (userId, id_meta) => {
