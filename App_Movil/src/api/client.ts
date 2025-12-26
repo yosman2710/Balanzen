@@ -16,3 +16,20 @@ api.interceptors.request.use(async (config) => {
     config.headers["Content-Type"] = "application/json";
     return config;
 });
+
+export const idUser = async () => {
+    const token = await getToken();
+    if (token) {
+        try {
+            const { data } = await api.get("/auth/verify");
+            return data.userId || data.id; // Adjust based on token payload
+        } catch (e) {
+            console.error("Error verifying token", e);
+            return null;
+        }
+    }
+    return null;
+};
+
+
+

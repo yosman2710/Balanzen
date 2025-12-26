@@ -184,38 +184,57 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
                         <Card style={{
                             padding: 0,
                             overflow: 'hidden',
-                            borderColor: '#ddd6fe',
+                            borderRadius: 24,
                             borderWidth: 1,
-                            borderRadius: 16
+                            borderColor: '#e9d5ff',
+                            elevation: 2,
+                            shadowColor: '#7c3aed',
+                            shadowOpacity: 0.1,
+                            shadowRadius: 8,
+                            shadowOffset: { width: 0, height: 4 }
                         }}>
                             <LinearGradient
-                                colors={['#f5f3ff', '#faf5ff']}
-                                style={{ padding: 20 }}
+                                colors={['#ffffff', '#f5f3ff']}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                                style={{ padding: 24 }}
                             >
-                                <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                                        <View style={{
-                                            width: 40,
-                                            height: 40,
-                                            borderRadius: 12,
-                                            backgroundColor: '#ede9fe',
-                                            alignItems: 'center',
-                                            justifyContent: 'center'
-                                        }}>
-                                            <Target size={20} color="#7c3aed" />
-                                        </View>
-                                        <View>
-                                            <Text style={{ fontSize: 16, fontWeight: '600', color: '#0f172a' }}>
-                                                No tienes metas de ahorro
-                                            </Text>
-                                            <Text style={{ fontSize: 14, color: '#475569' }}>
-                                                Crea una nueva meta de ahorro
-                                            </Text>
-                                        </View>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <View style={{
+                                        width: 56,
+                                        height: 56,
+                                        borderRadius: 18,
+                                        backgroundColor: '#f3e8ff',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginRight: 16,
+                                        borderWidth: 1,
+                                        borderColor: '#d8b4fe'
+                                    }}>
+                                        <Target size={28} color="#7c3aed" />
                                     </View>
-                                    <Text style={{ color: '#7c3aed', fontSize: 14, fontWeight: '500' }}>
-                                        Crear meta
-                                    </Text>
+                                    <View style={{ flex: 1, marginRight: 8 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: '700', color: '#2e1065', marginBottom: 4 }}>
+                                            Metas de Ahorro
+                                        </Text>
+                                        <Text style={{ fontSize: 14, color: '#5b21b6', lineHeight: 20 }}>
+                                            Establece una meta y comienza a ahorrar.
+                                        </Text>
+                                    </View>
+                                    <View style={{
+                                        backgroundColor: '#7c3aed',
+                                        width: 36,
+                                        height: 36,
+                                        borderRadius: 18,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        shadowColor: '#7c3aed',
+                                        shadowOpacity: 0.3,
+                                        shadowRadius: 4,
+                                        elevation: 4
+                                    }}>
+                                        <Plus size={20} color="white" />
+                                    </View>
                                 </View>
                             </LinearGradient>
                         </Card>

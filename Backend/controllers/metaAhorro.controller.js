@@ -2,7 +2,7 @@ import {
     getMetaAhorroDashboardService, createMetaAhorroService, deleteMetaAhorroService,
     findMetaAhorroByIdService, findMetasAhorroByUsuarioService, updateMetaAhorroService
 } from '../services/metaAhorro.service.js';
-import { createContribucionService } from '../services/contribuciones.service.js';
+import { createContribucionService, deleteContribucionService } from '../services/contribuciones.service.js';
 
 export const getMetaAhorroDashboardController = async (req, res) => {
     try {
@@ -93,9 +93,9 @@ export const updateContribucionMetaController = async (req, res) => {
 export const deleteContribucionMetaController = async (req, res) => {
     try {
         const userId = req.user.userId;
-        const { id_meta } = req.params;
-        const { id_contribucion } = req.params;
-        await deleteContribucionMetaService(userId, id_meta, id_contribucion);
+        const { id_meta, id_contribucion } = req.params;
+        console.log(userId, id_meta, id_contribucion);
+        await deleteContribucionService(userId, id_meta, id_contribucion);
         res.json({ message: 'Contribución eliminada' });
     } catch (error) {
         console.error('Error al eliminar la contribución:', error);

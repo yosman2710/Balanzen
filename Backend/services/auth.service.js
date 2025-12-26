@@ -40,7 +40,7 @@ export const loginUserService = async (email, password) => {
     const userId = user.id || user.id_usuario;
 
     const token = jwt.sign(
-        { userId: userId, email: user.email },
+        { userId: userId, nombre: user.nombre, email: user.email },
         process.env.JWT_SECRET,
         { expiresIn: '2h' }
     );

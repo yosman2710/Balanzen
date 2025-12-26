@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import {
     User,
@@ -21,12 +21,17 @@ import { styles } from '../styles/Profile.style';
 import { useNavigation } from '@react-navigation/native';
 import type { RootStackParamList } from '../navegation/type'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { getUserById, Usuario } from '../api/usuario';
+import { idUser } from '../api/client';
 
 interface ProfileScreenProps {
     userName?: string;
     userEmail?: string;
     onLogout?: () => void;
 }
+
+
+
 
 const getInitials = (name: string) =>
     name
@@ -37,31 +42,49 @@ const getInitials = (name: string) =>
         .slice(0, 2);
 
 export function ProfileScreen({
-    userName = 'Demo User',
-    userEmail = 'demo@user.com',
+    userName = 'Usuario',
+    userEmail = 'usuario@email.com',
     onLogout
 }: ProfileScreenProps) {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const [user, setUser] = useState<Usuario | null>(null);
 
     const handleDeleteCategory = (categoryId: string) => {
         console.log('Eliminar categoría:', categoryId);
     };
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const userId = await idUser();
+                if (userId) {
+                    const userData = await getUserById(userId);
+                    setUser(userData);
+                }
+            } catch (error) {
+                console.error('Error al obtener datos del usuario:', error);
+            }
+        };
+        fetchUser();
+    }, []);
+
+    const displayName = user?.nombre || userName;
+    const displayEmail = user?.email || userEmail;
 
 
 
     return (
         <View style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                {/* Header */}
                 <View style={styles.header}>
                     <View style={styles.headerCenter}>
                         <Avatar
                             size={96}
                             backgroundColor="rgba(255,255,255,0.2)"
-                            text={getInitials(userName)}
+                            text={getInitials(displayName)}
                         />
-                        <Text style={styles.headerName}>{userName}</Text>
-                        <Text style={styles.headerEmail}>{userEmail}</Text>
+                        <Text style={styles.headerName}>{displayName}</Text>
+                        <Text style={styles.headerEmail}>{displayEmail}</Text>
                     </View>
                 </View>
 

@@ -32,7 +32,7 @@ export const getCategoryById = async (id: string) => {
 
 export const deleteCategory = async (id: string) => {
     const { data } = await api.delete(`/categorias/${id}`);
-    return data; // { id, name, icon, color, type }
+    return data;
 };
 
 export const updateCategory = async (id: string, category: {
@@ -42,5 +42,5 @@ export const updateCategory = async (id: string, category: {
     type: "ingreso" | "gasto";
 }) => {
     const { data } = await api.put(`/categorias/${id}`, category);
-    return data; // { id, name, icon, color, type }
+    return data;
 };

@@ -5,6 +5,7 @@ import {
   getCategoriaById,
   getCategoriasUser,
 } from '../models/categorias.model.js';
+import { findTransaccionesByCategoriaId } from '../models/transaccion.model.js';
 
 // Regla de negocio: no permitir duplicados personalizados para el mismo usuario
 // Regla de negocio: no permitir duplicados personalizados para el mismo usuario
@@ -21,6 +22,12 @@ export const createCategoriaService = async (name, type, id_usuario, color, icon
 export const deleteCategoriaService = async (id_categoria, id_usuario) => {
   const cat = await getCategoriaById(id_categoria, id_usuario);
   if (!cat || cat.es_predeterminada) throw new Error("No se puede eliminar una categoría predeterminada.");
+
+  const transactions = await findTransaccionesByCategoriaId(id_categoria, id_usuario);
+  if (transactions.length > 0) {
+    throw new Error("No se puede eliminar una categoría con transacciones.");
+  }
+
   return await deleteCategoria(id_categoria, id_usuario);
 };
 

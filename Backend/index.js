@@ -14,6 +14,7 @@ import alertasRoutes from './routes/alertas.route.js';
 import contribucionesRoutes from './routes/contribuciones.route.js';
 import chatbotRoutes from './routes/historial_chatbot.route.js';
 import metaAhorroRoutes from './routes/metaAhorro.route.js';
+import usuarioRoutes from './routes/usuario.route.js';
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ app.use('/alertas', alertasRoutes);
 app.use('/contribuciones', contribucionesRoutes);
 app.use('/chatbot', chatbotRoutes);
 app.use('/metaAhorro', metaAhorroRoutes);
+app.use('/usuario', usuarioRoutes);
 
 app.get('/', (req, res) => {
   res.json({ mensaje: 'Backend de Balanzen funcionando correctamente 🚀' });

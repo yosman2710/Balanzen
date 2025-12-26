@@ -25,3 +25,8 @@ export const register = async (req, res) => {
         res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor' });
     }
 };
+
+export const verify = (req, res) => {
+    // req.user viene del middleware verifyToken
+    res.json(req.user);
+};

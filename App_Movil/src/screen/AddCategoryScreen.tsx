@@ -56,15 +56,15 @@ export const AddCategoryScreen: React.FC<AddCategoryScreenProps> = ({
     ];
 
     const colorOptions = [
-        { name: 'Rojo', value: '#ef4444' },
-        { name: 'Naranja', value: '#f97316' },
-        { name: 'Amarillo', value: '#eab308' },
-        { name: 'Verde', value: '#10b981' },
-        { name: 'Azul', value: '#3b82f6' },
-        { name: 'Índigo', value: '#6366f1' },
-        { name: 'Púrpura', value: '#8b5cf6' },
-        { name: 'Rosa', value: '#ec4899' },
-        { name: 'Gris', value: '#64748b' },
+        { name: 'Rojo', hex: '#ef4444' },
+        { name: 'Naranja', hex: '#f97316' },
+        { name: 'Amarillo', hex: '#eab308' },
+        { name: 'Verde', hex: '#10b981' },
+        { name: 'Azul', hex: '#3b82f6' },
+        { name: 'Índigo', hex: '#6366f1' },
+        { name: 'Púrpura', hex: '#8b5cf6' },
+        { name: 'Rosa', hex: '#ec4899' },
+        { name: 'Gris', hex: '#64748b' },
     ];
 
     const validateForm = () => {
@@ -172,15 +172,15 @@ export const AddCategoryScreen: React.FC<AddCategoryScreenProps> = ({
                     <View style={styles.colorGrid}>
                         {colorOptions.map(option => (
                             <TouchableOpacity
-                                key={option.value}
-                                onPress={() => setSelectedColor(option.value)}
+                                key={option.hex}
+                                onPress={() => setSelectedColor(option.hex)}
                                 style={[
                                     styles.colorButton,
-                                    selectedColor === option.value && styles.colorButtonActive,
+                                    selectedColor === option.hex && styles.colorButtonActive,
                                 ]}
                             >
-                                <View style={[styles.colorSwatch, { backgroundColor: option.value }]} />
-                                {selectedColor === option.value && (
+                                <View style={[styles.colorSwatch, { backgroundColor: option.hex }]} />
+                                {selectedColor === option.hex && (
                                     <Palette size={16} color="#ffffff" style={styles.colorCheck} />
                                 )}
                             </TouchableOpacity>
@@ -198,7 +198,7 @@ export const AddCategoryScreen: React.FC<AddCategoryScreenProps> = ({
                                 <SelectedIcon size={24} color={selectedColor} />
                             </View>
                             <View>
-                                <Text style={styles.previewName}>{name}</Text> {/* ✅ NOMBRE USUARIO */}
+                                <Text style={styles.previewName}>{name}</Text>
                                 <Text style={styles.previewType}>{typeLabels[type]}</Text>
                             </View>
                         </View>

@@ -12,9 +12,9 @@ export const createUsuario = async ({ nombre, email, password, fecha_nacimiento,
 
 // Obtener usuario por id
 export const getUserByIdFromDB = async (id) => {
-  const query = `SELECT * FROM usuarios WHERE id = ?`;
+  const query = `SELECT * FROM usuarios WHERE id_usuario = ?`;
   const [results] = await db.query(query, [id]);
-  return results;
+  return results[0];
 };
 
 // Buscar usuario por email

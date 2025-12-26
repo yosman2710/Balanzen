@@ -10,6 +10,7 @@ import {
     Modal,
     Pressable,
     ActivityIndicator,
+    Alert,
 } from 'react-native';
 import {
     Plus,
@@ -72,6 +73,15 @@ export const CategoriesScreen: React.FC = () => {
 
     const handleDeleteClick = (category: CategoryDTO) => {
         if (category.isDefault) return;
+
+        if ((category.transactionCount || 0) > 0) {
+            Alert.alert(
+                'No se puede eliminar',
+                'No puedes eliminar esta categoría porque tiene transacciones asociadas.'
+            );
+            return;
+        }
+
         setCategoryToDelete(category);
     };
 
@@ -82,8 +92,13 @@ export const CategoriesScreen: React.FC = () => {
             setCategories(prev =>
                 prev.filter(c => c.id !== categoryToDelete.id),
             );
-        } catch (e) {
+        } catch (e: any) {
             console.error('Error eliminando categoría', e);
+            const errorMessage = e.response?.data?.error || e.message || 'No se pudo eliminar la categoría';
+            Alert.alert(
+                'Error',
+                errorMessage
+            );
         } finally {
             setCategoryToDelete(null);
         }
