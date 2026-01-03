@@ -31,22 +31,48 @@ export default function App() {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Appearance">
-        <Stack.Screen name="MainTabs" component={TabNavigation} options={{ headerShown: false }} />
-        <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="welcome" component={WelcomeScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="AddTransaction" component={AddTransactionWrapper} options={{ headerShown: false }} />
-        <Stack.Screen name="AddBudget" component={AddBudgetWrapper} options={{ headerShown: false }} />
-        <Stack.Screen name="AddCategory" component={AddCategoryWrapper} options={{ headerShown: false }} />
-        <Stack.Screen name="Categories" component={CategoriesWrapper} options={{ headerShown: false }} />
-        <Stack.Screen name="CategoryDetail" component={CategoryDetailScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="BudgetDetail" component={BudgetDetailWrapper} options={{ headerShown: false }} />
-        <Stack.Screen name="AddSavingsGoal" component={AddSavingsGoalWrapper} options={{ headerShown: false }} />
-        <Stack.Screen name="SavingsGoalDetail" component={SavingsGoalDetailWrapper} options={{ headerShown: false }} />
-        <Stack.Screen name="Terms" component={TermsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="HelpCenter" component={HelpCenterScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Appearance" component={AppearanceScreen} options={{ headerShown: false }} />
+      <Stack.Navigator
+        initialRouteName="welcome"
+        screenOptions={{
+          headerShown: false,
+          animation: 'slide_from_right', // Default animation for all screens
+        }}
+      >
+        <Stack.Screen name="MainTabs" component={TabNavigation} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="welcome" component={WelcomeScreen} />
+
+        {/* Modal screens for creating items */}
+        <Stack.Screen
+          name="AddTransaction"
+          component={AddTransactionWrapper}
+          options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+        />
+        <Stack.Screen
+          name="AddBudget"
+          component={AddBudgetWrapper}
+          options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+        />
+        <Stack.Screen
+          name="AddCategory"
+          component={AddCategoryWrapper}
+          options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+        />
+        <Stack.Screen
+          name="AddSavingsGoal"
+          component={AddSavingsGoalWrapper}
+          options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+        />
+
+        {/* Detail screens (keep default slide_from_right) */}
+        <Stack.Screen name="Categories" component={CategoriesWrapper} />
+        <Stack.Screen name="CategoryDetail" component={CategoryDetailScreen} />
+        <Stack.Screen name="BudgetDetail" component={BudgetDetailWrapper} />
+        <Stack.Screen name="SavingsGoalDetail" component={SavingsGoalDetailWrapper} />
+        <Stack.Screen name="Terms" component={TermsScreen} />
+        <Stack.Screen name="HelpCenter" component={HelpCenterScreen} />
+        <Stack.Screen name="Appearance" component={AppearanceScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

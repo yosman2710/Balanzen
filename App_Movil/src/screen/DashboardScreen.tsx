@@ -5,6 +5,7 @@ import {
     ScrollView,
     Text,
     Dimensions,
+    RefreshControl,
     ActivityIndicator,
     TouchableOpacity
 } from 'react-native';
@@ -48,6 +49,7 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
     const navigation = useNavigation<NavigationProp>();
 
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const [monthIncome, setMonthIncome] = useState(0);
@@ -63,9 +65,13 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
 
     const currentMonth = new Date().toLocaleDateString('es-ES', { month: 'long' });
 
-    const fetchData = useCallback(async () => {
+    const fetchData = useCallback(async (isRefresh = false) => {
         try {
-            setLoading(true);
+            if (isRefresh) {
+                setRefreshing(true);
+            }
+            // We removed setLoading(true) here to avoid the white flash on focus
+
             const data = await getDashboardResumen();
 
             setMonthIncome(Number(data.ingresosMes));
@@ -119,6 +125,7 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
             setError(err?.response?.data?.error || 'Error cargando dashboard');
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
     }, []);
 
@@ -128,15 +135,24 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
         }, [fetchData])
     );
 
+    const onRefresh = useCallback(() => {
+        fetchData(true);
+    }, [fetchData]);
+
 
     const monthBalance = monthIncome - monthExpenses;
 
-    if (loading) return <ActivityIndicator size="large" color="#047857" />;
+    // Show initial loading only if we have no data yet (optional refinement) or strictly on first mount
+    if (loading && !monthlyData.labels.length && !error) return <ActivityIndicator size="large" color="#047857" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />;
     if (error) return <Text style={{ color: 'red' }}>{error}</Text>;
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#047857']} />
+                }
+            >
                 <View style={styles.cardsContainer}>
                     <IncomeCard
                         amount={monthIncome}
