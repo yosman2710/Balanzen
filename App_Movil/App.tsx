@@ -13,6 +13,9 @@ import { CategoryDetailScreen } from "./src/screen/CategoryDetailsScreen";
 import { BudgetDetailWrapper } from "./src/Wrapper/BudgetDetailWrapper";
 import { AddSavingsGoalWrapper } from "./src/Wrapper/AddSavingsGoalWrapper";
 import { SavingsGoalDetailWrapper } from "./src/Wrapper/SavingsGoalDetailWrapper";
+import { TermsScreen } from "./src/screen/TermsScreen";
+import { HelpCenterScreen } from "./src/screen/HelpCenterScreen";
+import { AppearanceScreen } from "./src/screen/AppearanceScreen";
 import { LogBox } from 'react-native';
 
 LogBox.ignoreLogs([
@@ -28,7 +31,7 @@ export default function App() {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Appearance">
         <Stack.Screen name="MainTabs" component={TabNavigation} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
@@ -41,6 +44,9 @@ export default function App() {
         <Stack.Screen name="BudgetDetail" component={BudgetDetailWrapper} options={{ headerShown: false }} />
         <Stack.Screen name="AddSavingsGoal" component={AddSavingsGoalWrapper} options={{ headerShown: false }} />
         <Stack.Screen name="SavingsGoalDetail" component={SavingsGoalDetailWrapper} options={{ headerShown: false }} />
+        <Stack.Screen name="Terms" component={TermsScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="HelpCenter" component={HelpCenterScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Appearance" component={AppearanceScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
