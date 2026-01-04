@@ -8,9 +8,12 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import {
     Search,
+    Inbox,
+    FileQuestion,
 } from 'lucide-react-native';
 import { Card } from '../component/ui/Card';
 import { Button } from '../component/ui/Button';
+import { EmptyState } from '../component/ui/EmptyState';
 import { styles } from '../styles/Transactions.style';
 import { listarTransacciones } from '../api/transacciones';
 import { IconByName } from '../component/IconMapper';
@@ -82,133 +85,148 @@ export function TransactionsScreen() {
 
     return (
         <View style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                {/* Header con resumen */}
-                <View style={styles.header}>
-                    <Text style={styles.headerTitle}>Movimientos</Text>
-
-                    <View style={styles.headerCardsRow}>
-                        <Card style={styles.headerCard}>
-                            <Text style={styles.headerCardLabel}>Total Ingresos</Text>
-                            <Text style={styles.headerCardAmount}>
-                                $
-                                {totalIncome.toLocaleString('es-ES', {
-                                    minimumFractionDigits: 2,
-                                })}
-                            </Text>
-                        </Card>
-
-                        <Card style={styles.headerCard}>
-                            <Text style={styles.headerCardLabel}>Total Gastos</Text>
-                            <Text style={styles.headerCardAmount}>
-                                $
-                                {totalExpense.toLocaleString('es-ES', {
-                                    minimumFractionDigits: 2,
-                                })}
-                            </Text>
-                        </Card>
+            {allTransactions.length === 0 ? (
+                <>
+                    <View style={styles.header}>
+                        <Text style={styles.headerTitle}>Movimientos</Text>
                     </View>
-                </View>
+                    <EmptyState
+                        icon={Inbox}
+                        title="No hay transacciones"
+                        message="Tus movimientos aparecerán aquí."
+                        style={{ marginTop: 100 }}
+                    />
+                </>
+            ) : (
+                <ScrollView contentContainerStyle={styles.scrollContent}>
+                    {/* Header con resumen */}
+                    <View style={styles.header}>
+                        <Text style={styles.headerTitle}>Movimientos</Text>
 
-                {/* Búsqueda y filtros */}
-                <View style={styles.filtersContainer}>
-                    <View style={styles.searchWrapper}>
-                        <Search size={18} color="#94a3b8" style={styles.searchIcon} />
-                        <TextInput
-                            placeholder="Buscar transacciones..."
-                            value={searchQuery}
-                            onChangeText={setSearchQuery}
-                            style={styles.searchInput}
-                            placeholderTextColor="#94a3b8"
-                        />
-                    </View>
+                        <View style={styles.headerCardsRow}>
+                            <Card style={styles.headerCard}>
+                                <Text style={styles.headerCardLabel}>Total Ingresos</Text>
+                                <Text style={styles.headerCardAmount}>
+                                    $
+                                    {totalIncome.toLocaleString('es-ES', {
+                                        minimumFractionDigits: 2,
+                                    })}
+                                </Text>
+                            </Card>
 
-                    <View style={styles.tabsRow}>
-                        <FilterChip
-                            label="Todas"
-                            active={activeFilter === 'all'}
-                            onPress={() => setActiveFilter('all')}
-                        />
-                        <FilterChip
-                            label="Ingresos"
-                            active={activeFilter === 'ingreso'}
-                            onPress={() => setActiveFilter('ingreso')}
-                        />
-                        <FilterChip
-                            label="Gastos"
-                            active={activeFilter === 'gasto'}
-                            onPress={() => setActiveFilter('gasto')}
-                        />
-                    </View>
-                </View>
-
-                {/* Lista agrupada */}
-                <View style={styles.listContainer}>
-                    {groupedEntries.length > 0 ? (
-                        groupedEntries.map(([date, txs]) => (
-                            <View key={date} style={styles.dateGroup}>
-                                <Text style={styles.dateLabel}>{date}</Text>
-
-                                {txs.map((t) => {
-                                    const isIncome = t.type === 'ingreso';
-                                    return (
-                                        <Card key={t.id} style={styles.txCard}>
-                                            <View style={styles.txRow}>
-                                                <View style={styles.txLeft}>
-                                                    <View
-                                                        style={[
-                                                            styles.txIconWrapper,
-                                                            isIncome
-                                                                ? styles.txIconIncomeBg
-                                                                : styles.txIconExpenseBg,
-                                                        ]}
-                                                    >
-                                                        <IconByName
-                                                            name={t.icon}
-                                                            color={isIncome ? '#16a34a' : '#dc2626'}
-                                                            size={20}
-                                                        />
-                                                    </View>
-                                                    <View>
-                                                        <Text style={styles.txDescription}>
-                                                            {t.description}
-                                                        </Text>
-                                                        <Text style={styles.txCategory}>
-                                                            {t.category}
-                                                        </Text>
-                                                    </View>
-                                                </View>
-
-                                                <View style={styles.txRight}>
-                                                    <Text
-                                                        style={[
-                                                            styles.txAmount,
-                                                            isIncome
-                                                                ? styles.txAmountIncome
-                                                                : styles.txAmountExpense,
-                                                        ]}
-                                                    >
-                                                        {isIncome ? '+' : '-'}$
-                                                        {t.amount.toLocaleString('es-ES', {
-                                                            minimumFractionDigits: 2,
-                                                        })}
-                                                    </Text>
-                                                </View>
-                                            </View>
-                                        </Card>
-                                    );
-                                })}
-                            </View>
-                        ))
-                    ) : (
-                        <View style={styles.emptyState}>
-                            <Text style={styles.emptyText}>
-                                No se encontraron transacciones
-                            </Text>
+                            <Card style={styles.headerCard}>
+                                <Text style={styles.headerCardLabel}>Total Gastos</Text>
+                                <Text style={styles.headerCardAmount}>
+                                    $
+                                    {totalExpense.toLocaleString('es-ES', {
+                                        minimumFractionDigits: 2,
+                                    })}
+                                </Text>
+                            </Card>
                         </View>
-                    )}
-                </View>
-            </ScrollView>
+                    </View>
+
+                    {/* Búsqueda y filtros */}
+                    <View style={styles.filtersContainer}>
+                        <View style={styles.searchWrapper}>
+                            <Search size={18} color="#94a3b8" style={styles.searchIcon} />
+                            <TextInput
+                                placeholder="Buscar transacciones..."
+                                value={searchQuery}
+                                onChangeText={setSearchQuery}
+                                style={styles.searchInput}
+                                placeholderTextColor="#94a3b8"
+                            />
+                        </View>
+
+                        <View style={styles.tabsRow}>
+                            <FilterChip
+                                label="Todas"
+                                active={activeFilter === 'all'}
+                                onPress={() => setActiveFilter('all')}
+                            />
+                            <FilterChip
+                                label="Ingresos"
+                                active={activeFilter === 'ingreso'}
+                                onPress={() => setActiveFilter('ingreso')}
+                            />
+                            <FilterChip
+                                label="Gastos"
+                                active={activeFilter === 'gasto'}
+                                onPress={() => setActiveFilter('gasto')}
+                            />
+                        </View>
+                    </View>
+
+                    {/* Lista agrupada */}
+                    <View style={styles.listContainer}>
+                        {groupedEntries.length > 0 ? (
+                            groupedEntries.map(([date, txs]) => (
+                                <View key={date} style={styles.dateGroup}>
+                                    <Text style={styles.dateLabel}>{date}</Text>
+
+                                    {txs.map((t) => {
+                                        const isIncome = t.type === 'ingreso';
+                                        return (
+                                            <Card key={t.id} style={styles.txCard}>
+                                                <View style={styles.txRow}>
+                                                    <View style={styles.txLeft}>
+                                                        <View
+                                                            style={[
+                                                                styles.txIconWrapper,
+                                                                isIncome
+                                                                    ? styles.txIconIncomeBg
+                                                                    : styles.txIconExpenseBg,
+                                                            ]}
+                                                        >
+                                                            <IconByName
+                                                                name={t.icon}
+                                                                color={isIncome ? '#16a34a' : '#dc2626'}
+                                                                size={20}
+                                                            />
+                                                        </View>
+                                                        <View>
+                                                            <Text style={styles.txDescription}>
+                                                                {t.description}
+                                                            </Text>
+                                                            <Text style={styles.txCategory}>
+                                                                {t.category}
+                                                            </Text>
+                                                        </View>
+                                                    </View>
+
+                                                    <View style={styles.txRight}>
+                                                        <Text
+                                                            style={[
+                                                                styles.txAmount,
+                                                                isIncome
+                                                                    ? styles.txAmountIncome
+                                                                    : styles.txAmountExpense,
+                                                            ]}
+                                                        >
+                                                            {isIncome ? '+' : '-'}$
+                                                            {t.amount.toLocaleString('es-ES', {
+                                                                minimumFractionDigits: 2,
+                                                            })}
+                                                        </Text>
+                                                    </View>
+                                                </View>
+                                            </Card>
+                                        );
+                                    })}
+                                </View>
+                            ))
+                        ) : (
+                            <EmptyState
+                                icon={FileQuestion}
+                                title="No se encontraron resultados"
+                                message="Intenta ajustar los filtros de búsqueda."
+                                style={{ marginTop: 40 }}
+                            />
+                        )}
+                    </View>
+                </ScrollView>
+            )}
         </View>
     );
 }

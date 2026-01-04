@@ -45,7 +45,14 @@ import {
     Activity,
     LucideIcon,
     LucideProps,
-    House
+    House,
+    Shirt,
+    BookOpen,
+    Film,
+    Dumbbell,
+    Fuel,
+    Wrench,
+    Laptop2
 } from 'lucide-react-native';
 
 export const iconMap: Record<string, LucideIcon> = {
@@ -92,7 +99,14 @@ export const iconMap: Record<string, LucideIcon> = {
     Percent,
     ArrowRightLeft,
     Activity,
-    House
+    House,
+    Shirt,
+    BookOpen,
+    Film,
+    Dumbbell,
+    Fuel,
+    Wrench,
+    Laptop2
 };
 
 interface IconByNameProps extends LucideProps {

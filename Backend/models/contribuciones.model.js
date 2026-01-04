@@ -11,9 +11,9 @@ export const createContribucion = async (userId, id_meta, monto, descripcion) =>
 };
 
 // Obtener contribuciones por meta
-export const getContribucionesByMeta = async (userId, id_meta) => {
-    const query = `SELECT * FROM contribuciones WHERE id_meta = ? AND id_usuario = ? ORDER BY fecha DESC`;
-    const [rows] = await db.query(query, [id_meta, userId]);
+export const getContribucionesByMeta = async (id_meta) => {
+    const query = `SELECT * FROM contribuciones WHERE id_meta = ? ORDER BY fecha DESC;`;
+    const [rows] = await db.query(query, [id_meta]);
     return rows;
 };
 

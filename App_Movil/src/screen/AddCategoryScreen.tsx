@@ -12,6 +12,11 @@ import {
     Palette,
     ShoppingCart, Home, Car, Coffee, Zap, Heart, BookOpen,
     Smartphone, Shirt, Film, Dumbbell, Gift, Plane, Utensils, Fuel, Wrench,
+    Camera,
+    Watch,
+    Headphones,
+    PiggyBank,
+    Monitor,
 } from 'lucide-react-native';
 import { styles } from '../styles/AddCategory.style';
 import { createCategory } from '../api/categories';
@@ -53,6 +58,11 @@ export const AddCategoryScreen: React.FC<AddCategoryScreenProps> = ({
         { name: 'Utensils', Icon: Utensils },
         { name: 'Fuel', Icon: Fuel },
         { name: 'Wrench', Icon: Wrench },
+        { name: 'Camera', Icon: Camera },
+        { name: 'Watch', Icon: Watch },
+        { name: 'Headphones', Icon: Headphones },
+        { name: 'PiggyBank', Icon: PiggyBank },
+        { name: 'Monitor', Icon: Monitor },
     ];
 
     const colorOptions = [
