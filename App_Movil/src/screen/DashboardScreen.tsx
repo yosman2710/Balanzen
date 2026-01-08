@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     View,
@@ -74,13 +74,14 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
 
             const data = await getDashboardResumen();
 
-            setMonthIncome(Number(data.ingresosMes));
-            setMonthExpenses(Number(data.gastosMes));
-            setIncomeChange(Number(data.incomeChange || 0));
-            setExpenseChange(Number(data.expenseChange || 0));
+            setMonthIncome(Number(data?.ingresosMes || 0));
+            setMonthExpenses(Number(data?.gastosMes || 0));
+            setIncomeChange(Number(data?.incomeChange || 0));
+            setExpenseChange(Number(data?.expenseChange || 0));
 
             const last5MonthsLabels: string[] = [];
             const last5MonthsValues: number[] = [];
+            const monthlyDataList = data?.monthly || [];
 
             for (let i = 4; i >= 0; i--) {
                 const date = new Date();
@@ -91,7 +92,7 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const key = `${year}-${month}`;
 
-                const monthData = data.monthly.find((m: any) => m.mes === key);
+                const monthData = monthlyDataList.find((m: any) => m.mes === key);
                 const value = monthData ? (Number(monthData.ingresos) - Number(monthData.gastos)) : 0;
 
                 const monthName = date.toLocaleDateString('es-ES', { month: 'short' });
@@ -106,10 +107,15 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
                 datasets: [{ data: last5MonthsValues }],
             });
 
-            setRecentTransactions(data.recent);
+            setRecentTransactions(data?.recent || []);
 
             try {
                 const metaData = await getDashboardMetaAhorro();
+                // Ensure amounts are numbers (backend might return strings for decimals)
+                if (metaData) {
+                    metaData.currentAmount = Number(metaData.currentAmount || 0);
+                    metaData.targetAmount = Number(metaData.targetAmount || 0);
+                }
                 setSavingsGoal(metaData);
             } catch (metaErr: any) {
                 if (metaErr.response && metaErr.response.status === 404) {
@@ -143,8 +149,23 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
     const monthBalance = monthIncome - monthExpenses;
 
     // Show initial loading only if we have no data yet (optional refinement) or strictly on first mount
-    if (loading && !monthlyData.labels.length && !error) return <ActivityIndicator size="large" color="#047857" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />;
-    if (error) return <Text style={{ color: 'red' }}>{error}</Text>;
+    if (loading && !monthlyData.labels.length && !error) {
+        return (
+            <ActivityIndicator
+                size="large"
+                color="#047857"
+                style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+            />
+        );
+    }
+
+    if (error) {
+        return (
+            <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ color: 'red' }}>{String(error)}</Text>
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={styles.container}>

@@ -422,4 +422,35 @@ export const styles = StyleSheet.create({
         color: '#ffffff',
         fontWeight: '600',
     },
+
+
+    /* Meta Completada */
+    completedCard: {
+        backgroundColor: '#dcfce7',
+        borderRadius: 16,
+        padding: 24,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#86efac',
+    },
+    completedIcon: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: '#bbf7d0',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    completedTitle: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#166534',
+        marginBottom: 8,
+    },
+    completedSubtitle: {
+        fontSize: 14,
+        color: '#15803d',
+        textAlign: 'center',
+    },
 });

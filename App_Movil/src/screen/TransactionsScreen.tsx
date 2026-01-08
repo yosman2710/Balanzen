@@ -39,7 +39,7 @@ export function TransactionsScreen() {
     const loadAllTransactions = async () => {
         try {
             const data = await listarTransacciones();
-            setAllTransactions(data);
+            setAllTransactions(data || []);
         } catch (error) {
             console.error('Error al cargar transacciones:', error);
         }

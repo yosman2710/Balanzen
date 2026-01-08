@@ -18,6 +18,7 @@ import {
     Trash2,
     DollarSign,
     AlertCircle,
+    CheckCircle,
 } from 'lucide-react-native';
 import { styles } from '../styles/SavingsGoalDetail.style';
 
@@ -61,8 +62,11 @@ export const SavingsGoalDetailScreen: React.FC<SavingsGoalDetailScreenProps> = (
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const percentage = (goal.currentAmount / goal.targetAmount) * 100;
-    const remaining = goal.targetAmount - goal.currentAmount;
+    const current = Number(goal.currentAmount || 0);
+    const target = Number(goal.targetAmount || 0);
+    const percentage = target > 0 ? (current / target) * 100 : 0;
+    const remaining = Math.max(0, target - current);
+    const isCompleted = current >= target;
 
     // Calcular días restantes
     const today = new Date();
@@ -73,9 +77,14 @@ export const SavingsGoalDetailScreen: React.FC<SavingsGoalDetailScreenProps> = (
 
     const validateContribution = () => {
         const newErrors: Record<string, string> = {};
-        if (!contributionAmount || parseFloat(contributionAmount) <= 0) {
+        const amount = parseFloat(contributionAmount);
+
+        if (!contributionAmount || isNaN(amount) || amount <= 0) {
             newErrors.contributionAmount = 'Ingresa un monto válido mayor a 0';
+        } else if (amount > remaining) {
+            newErrors.contributionAmount = `El monto excede lo restante ($${remaining.toFixed(2)})`;
         }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -93,9 +102,7 @@ export const SavingsGoalDetailScreen: React.FC<SavingsGoalDetailScreenProps> = (
 
     const handleDeleteGoal = () => {
         onDeleteGoal(goal.id);
-        Alert.alert('Meta eliminada', 'La meta de ahorro ha sido eliminada');
         setShowDeleteConfirm(false);
-        onClose();
     };
 
     return (
@@ -125,13 +132,13 @@ export const SavingsGoalDetailScreen: React.FC<SavingsGoalDetailScreenProps> = (
                             <View>
                                 <Text style={styles.labelSmall}>Progreso actual</Text>
                                 <Text style={styles.amountLarge}>
-                                    ${goal.currentAmount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                                    ${Number(goal.currentAmount).toLocaleString('es-ES', { minimumFractionDigits: 2 })}
                                 </Text>
                             </View>
                             <View style={styles.amountRight}>
                                 <Text style={styles.labelSmall}>Meta</Text>
                                 <Text style={styles.amountLarge}>
-                                    ${goal.targetAmount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                                    ${Number(goal.targetAmount).toLocaleString('es-ES', { minimumFractionDigits: 2 })}
                                 </Text>
                             </View>
                         </View>
@@ -188,13 +195,23 @@ export const SavingsGoalDetailScreen: React.FC<SavingsGoalDetailScreenProps> = (
                     </View>
                 </View>
 
-                {/* Formulario contribución */}
-                {showAddForm ? (
+                {/* Formulario contribución o Meta Completada */}
+                {isCompleted ? (
+                    <View style={styles.completedCard}>
+                        <View style={styles.completedIcon}>
+                            <CheckCircle size={32} color="#16a34a" strokeWidth={3} />
+                        </View>
+                        <Text style={styles.completedTitle}>¡Meta Completada!</Text>
+                        <Text style={styles.completedSubtitle}>
+                            Has alcanzado tu objetivo de ahorro. ¡Felicidades!
+                        </Text>
+                    </View>
+                ) : showAddForm ? (
                     <View style={styles.addFormCard}>
                         <Text style={styles.sectionTitle}>Añadir Contribución</Text>
                         <View style={styles.formFields}>
                             <View style={styles.field}>
-                                <Text style={styles.label}>Monto</Text>
+                                <Text style={styles.label}>Monto (Máx: ${remaining.toLocaleString('es-ES', { minimumFractionDigits: 2 })})</Text>
                                 <View style={[styles.inputWrapper, errors.contributionAmount && styles.inputError]}>
                                     <DollarSign size={18} color="#94a3b8" style={styles.inputIcon} />
                                     <TextInput

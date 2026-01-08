@@ -75,14 +75,6 @@ export const AddSavingsGoalScreen: React.FC<AddSavingsGoalScreenProps> = ({
             description: description.trim() || undefined,
         });
 
-        Alert.alert(
-            'Meta creada',
-            `${name} - $${amount.toLocaleString('es-ES', {
-                minimumFractionDigits: 2,
-            })}`,
-        );
-
-        onClose();
     };
 
     // fecha por defecto para el picker (mañana)

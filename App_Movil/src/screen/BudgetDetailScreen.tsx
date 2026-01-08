@@ -115,9 +115,7 @@ export const BudgetDetailScreen: React.FC<BudgetDetailScreenProps> = ({
     const handleDeleteBudget = () => {
         if (!budgetData?.budget) return;
         onDeleteBudget(budgetData.budget.id);
-        Alert.alert('Presupuesto eliminado', 'El presupuesto ha sido eliminado correctamente');
         setShowDeleteConfirm(false);
-        navigation.goBack();
     };
 
 

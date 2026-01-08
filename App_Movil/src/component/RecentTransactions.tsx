@@ -16,12 +16,10 @@ interface Transaction {
 
 interface RecentTransactionsProps {
     transactions: Transaction[];
-    onSeeAll?: () => void;
 }
 
 export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
     transactions,
-    onSeeAll,
 }) => {
     const renderItem = ({ item }: { item: Transaction }) => {
         const isIncome = item.type === 'ingreso';
@@ -69,9 +67,6 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
         <View style={styles.txSection}>
             <View style={styles.txHeader}>
                 <Text style={styles.txTitle}>Transacciones Recientes</Text>
-                <TouchableOpacity onPress={onSeeAll}>
-                    <Text style={styles.txSeeAll}>Ver todas</Text>
-                </TouchableOpacity>
             </View>
 
             <FlatList

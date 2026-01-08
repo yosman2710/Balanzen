@@ -23,7 +23,7 @@ export function BudgetsScreen() {
     const loadBudgets = async () => {
         try {
             const data = await getBudgetsWithProgress();
-            setBudgets(data);
+            setBudgets(data || []);
         } catch (error) {
             console.error('Error loading budgets:', error);
         }
@@ -154,12 +154,12 @@ export function BudgetsScreen() {
                                                     <View
                                                         style={[
                                                             styles.budgetIconWrapper,
-                                                            { backgroundColor: `${b.color}20` },
+                                                            { backgroundColor: `${b.color || '#000000'}20` },
                                                         ]}
                                                     >
                                                         <IconComponent
                                                             size={22}
-                                                            color={b.color}
+                                                            color={b.color || '#000000'}
                                                         />
                                                     </View>
                                                     <View>
@@ -233,7 +233,8 @@ export function BudgetsScreen() {
                             })}
                         </View>
                     </>
-                )}            </ScrollView>
+                )}
+            </ScrollView>
         </View>
     );
 }

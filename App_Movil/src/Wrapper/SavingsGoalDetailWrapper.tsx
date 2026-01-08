@@ -2,10 +2,12 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { SavingsGoalDetailScreen } from '../screen/SavingsGoalDetailScreen';
 import { getSavingsGoalById, addContribution, deleteContribution, deleteSavingsGoal } from '../api/savingsGoals';
-import { Alert, ActivityIndicator, View } from 'react-native';
+import { Alert, ActivityIndicator, View, Text } from 'react-native';
 import { RootStackParamList } from '../navegation/type';
+import { LoadingModal } from '../component/LoadingModal';
 
 type SavingsGoalDetailRouteProp = RouteProp<RootStackParamList, 'SavingsGoalDetail'>;
+
 
 export const SavingsGoalDetailWrapper = () => {
     const navigation = useNavigation();
@@ -15,18 +17,22 @@ export const SavingsGoalDetailWrapper = () => {
     const [goal, setGoal] = useState<any>(null);
     const [contributions, setContributions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [processing, setProcessing] = useState(false); // For delete/update actions
 
     const fetchGoalDetails = useCallback(async () => {
         try {
             setLoading(true);
             const data = await getSavingsGoalById(id);
-            // Assuming data structure: { goal: ..., contributions: ... } or flat
-            // Adjust based on actual API response. Assuming data contains everything or flat object.
-            // If data is just the goal with included contributions:
-            setGoal(data);
-            setContributions(data.contributions || []);
+            console.log("Goal Data:", JSON.stringify(data));
+
+            // Handle potential nested structures
+            const goalObj = data.goal || data.metaAhorro || data;
+            const contribs = data.contributions || data.contribuciones || [];
+
+            setGoal(goalObj);
+            setContributions(contribs);
         } catch (error) {
-            console.error(error);
+            console.error("Fetch Error:", error);
             Alert.alert("Error", "No se pudieron cargar los detalles de la meta");
             navigation.goBack();
         } finally {
@@ -40,29 +46,40 @@ export const SavingsGoalDetailWrapper = () => {
 
     const handleAddContribution = async (goalId: string, amount: number, note?: string) => {
         try {
+            setProcessing(true);
             await addContribution(goalId, { amount, note });
-            fetchGoalDetails(); // Refresh
+            await fetchGoalDetails(); // Refresh
         } catch (error) {
             console.error(error);
             Alert.alert("Error", "No se pudo registrar la contribución");
+        } finally {
+            setProcessing(false);
         }
     };
 
     const handleDeleteContribution = async (goalId: string, contributionId: string) => {
         try {
+            setProcessing(true);
             await deleteContribution(goalId, contributionId);
-            fetchGoalDetails(); // Refresh
+            await fetchGoalDetails(); // Refresh
         } catch (error) {
             console.error(error);
             Alert.alert("Error", "No se pudo eliminar la contribución");
+        } finally {
+            setProcessing(false);
         }
     };
 
     const handleDeleteGoal = async (goalId: string) => {
         try {
+            setProcessing(true);
             await deleteSavingsGoal(goalId);
-            navigation.goBack();
+            setTimeout(() => {
+                setProcessing(false);
+                navigation.goBack();
+            }, 1000);
         } catch (error) {
+            setProcessing(false);
             console.error(error);
             Alert.alert("Error", "No se pudo eliminar la meta");
         }
@@ -76,16 +93,25 @@ export const SavingsGoalDetailWrapper = () => {
         );
     }
 
-    if (!goal) return null;
+    if (!goal) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>No se encontró la información de la meta.</Text>
+            </View>
+        );
+    }
 
     return (
-        <SavingsGoalDetailScreen
-            goal={goal}
-            contributions={contributions}
-            onClose={() => navigation.goBack()}
-            onAddContribution={handleAddContribution}
-            onDeleteContribution={handleDeleteContribution}
-            onDeleteGoal={handleDeleteGoal}
-        />
+        <>
+            <SavingsGoalDetailScreen
+                goal={goal}
+                contributions={contributions}
+                onClose={() => navigation.goBack()}
+                onAddContribution={handleAddContribution}
+                onDeleteContribution={handleDeleteContribution}
+                onDeleteGoal={handleDeleteGoal}
+            />
+            <LoadingModal visible={processing} message="Procesando..." />
+        </>
     );
 };

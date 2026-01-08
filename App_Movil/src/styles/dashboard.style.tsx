@@ -256,10 +256,6 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#0f172a',
   },
-  txSeeAll: {
-    fontSize: 12,
-    color: '#10b981',
-  },
   txCard: {
     padding: 12,
     borderRadius: 12,

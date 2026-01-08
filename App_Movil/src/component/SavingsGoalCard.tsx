@@ -17,16 +17,18 @@ interface SavingsGoalCardProps {
 }
 
 export const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({ goal, onPress }) => {
-    // Calculate percentage, cap at 100 for storage/display if needed
-    const percentage = goal.targetAmount > 0
-        ? Math.min((goal.currentAmount / goal.targetAmount) * 100, 100)
+    // Calculate percentage, cap at 100
+    const target = Number(goal.targetAmount);
+    const current = Number(goal.currentAmount);
+    const percentage = target > 0
+        ? Math.min((current / target) * 100, 100)
         : 0;
 
     // Wrapper component to handle onPress if provided, otherwise View
     const Wrapper = onPress ? TouchableOpacity : View;
 
     return (
-        <Wrapper onPress={onPress} activeOpacity={0.9} style={{ marginBottom: 24, marginHorizontal: 24 }}>
+        <Wrapper onPress={onPress} activeOpacity={0.9} style={{ marginBottom: 24, marginHorizontal: 16 }}>
             <Card
                 style={{
                     padding: 0,
@@ -57,18 +59,15 @@ export const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({ goal, onPress 
                                 <Text style={{ fontSize: 14, color: '#475569' }}>Meta de ahorro</Text>
                             </View>
                         </View>
-                        <Text style={{ color: '#7c3aed', fontSize: 14, fontWeight: '500' }}>
-                            Ver detalles
-                        </Text>
                     </View>
 
                     <View style={{ gap: 8 }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <Text style={{ fontSize: 14, color: '#475569' }}>
-                                ${goal.currentAmount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                                ${Number(goal.currentAmount).toLocaleString('es-ES', { minimumFractionDigits: 2 })}
                             </Text>
                             <Text style={{ fontSize: 14, fontWeight: '600', color: '#0f172a' }}>
-                                ${goal.targetAmount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                                ${Number(goal.targetAmount).toLocaleString('es-ES', { minimumFractionDigits: 2 })}
                             </Text>
                         </View>
 
