@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
     },
     formContainer: {
         paddingHorizontal: 32,
-        paddingVertical: 150,
+        paddingVertical: 30,
         paddingBottom: 60,
     },
     inputGroup: {
@@ -109,11 +109,11 @@ export const styles = StyleSheet.create({
     },
     errorText: {
         color: '#ef4444',
-        fontSize: 14,
+        fontSize: 16,
         marginTop: 6,
     },
     forgotPassword: {
-        alignSelf: 'flex-end',
+        alignSelf: 'flex-start',
         marginBottom: 32,
     },
     forgotPasswordText: {

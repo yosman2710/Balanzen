@@ -25,7 +25,7 @@ export function WelcomeScreen() {
               <Wallet color="white" size={40} strokeWidth={2.5} />
             </View>
             <Text style={styles.title}>FinanzasPro</Text>
-            <Text style={styles.subtitle}>Tu compañero financiero personal</Text>
+            <Text style={styles.subtitle}>Tu compañe financiero personal</Text>
           </View>
         </ImageBackground>
       </View>

@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   header: {
-    height: 250,
+    height: 220,
     position: "relative",
   },
   headerImage: {
@@ -84,7 +84,7 @@ export const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 80,
+    marginTop: 10,
   },
 
   primaryButtonText: {
