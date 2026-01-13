@@ -23,3 +23,19 @@ export const findUserByEmail = async (email) => {
   const [results] = await db.query(query, [email]);
   return results;
 };
+
+export const updateUser = async (id, { nombre, email, fecha_nacimiento, genero, pais }) => {
+  const query = `
+    UPDATE usuarios
+    SET nombre = ?, email = ?, fecha_nacimiento = ?, genero = ?, pais = ?
+    WHERE id_usuario = ?
+  `;
+  const [result] = await db.query(query, [nombre, email, fecha_nacimiento, genero, pais, id]);
+  return result.affectedRows;
+};
+
+export const updatePassword = async (id, password) => {
+  const query = `UPDATE usuarios SET password = ? WHERE id_usuario = ?`;
+  const [result] = await db.query(query, [password, id]);
+  return result.affectedRows;
+};

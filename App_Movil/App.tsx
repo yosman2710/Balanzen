@@ -1,5 +1,6 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
+import Toast from 'react-native-toast-message';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { enableScreens } from "react-native-screens";
 import { WelcomeScreen } from "./src/screen/WelcomeScreen";
@@ -16,6 +17,10 @@ import { SavingsGoalDetailWrapper } from "./src/Wrapper/SavingsGoalDetailWrapper
 import { TermsScreen } from "./src/screen/TermsScreen";
 import { HelpCenterScreen } from "./src/screen/HelpCenterScreen";
 import { AppearanceScreen } from "./src/screen/AppearanceScreen";
+import { LanguageScreen } from "./src/screen/LanguageScreen";
+import { EditProfileScreen } from "./src/screen/EditProfileScreen";
+import { SecurityScreen } from "./src/screen/SecurityScreen";
+import { PrivacyScreen } from "./src/screen/PrivacyScreen";
 import { LogBox } from 'react-native';
 
 LogBox.ignoreLogs([
@@ -42,7 +47,7 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="welcome" component={WelcomeScreen} />
-
+        <Stack.Screen name="Language" component={LanguageScreen} />
         {/* Modal screens for creating items */}
         <Stack.Screen
           name="AddTransaction"
@@ -73,7 +78,11 @@ export default function App() {
         <Stack.Screen name="Terms" component={TermsScreen} />
         <Stack.Screen name="HelpCenter" component={HelpCenterScreen} />
         <Stack.Screen name="Appearance" component={AppearanceScreen} />
+        <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+        <Stack.Screen name="Security" component={SecurityScreen} />
+        <Stack.Screen name="Privacy" component={PrivacyScreen} />
       </Stack.Navigator>
+      <Toast />
     </NavigationContainer>
   );
 }

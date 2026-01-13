@@ -157,6 +157,10 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: '#16a34a',
   },
+  cardSubNegative: {
+    fontSize: 12,
+    color: '#dc2626',
+  },
   expenseLabel: {
     fontSize: 13,
     color: '#b91c1c',

@@ -20,7 +20,7 @@ const countries = [
     "Puerto Rico", "Estados Unidos",
 ];
 
-const genders = ["Masculino", "Femenino", "Otro", "Prefiero no decir"];
+const genders = ["masculino", "femenino"];
 
 export function RegisterScreen() {
     const [name, setName] = useState('');

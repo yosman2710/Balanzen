@@ -12,4 +12,12 @@ export type RootStackParamList = {
     AddCategory: undefined;
     AddSavingsGoal: undefined;
     SavingsGoalDetail: { id: string };
+    Terms: undefined;
+    HelpCenter: undefined;
+    Appearance: undefined;
+    Language: undefined;
+    EditProfile: undefined;
+    Security: undefined;
+    Privacy: undefined;
+
 };

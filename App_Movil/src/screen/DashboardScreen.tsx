@@ -73,7 +73,6 @@ export function Dashboard({ onAddIncome, onAddExpense }: DashboardProps) {
             // We removed setLoading(true) here to avoid the white flash on focus
 
             const data = await getDashboardResumen();
-
             setMonthIncome(Number(data?.ingresosMes || 0));
             setMonthExpenses(Number(data?.gastosMes || 0));
             setIncomeChange(Number(data?.incomeChange || 0));

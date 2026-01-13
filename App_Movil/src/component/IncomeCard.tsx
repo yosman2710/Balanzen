@@ -28,8 +28,8 @@ export const IncomeCard: React.FC<IncomeCardProps> = ({ amount, change, month })
                 <Text style={styles.cardAmount}>
                     ${amount.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </Text>
-                <Text style={styles.cardSubPositive}>
-                    +{change}% vs mes anterior
+                <Text style={change < 0 ? styles.cardSubNegative : styles.cardSubPositive}>
+                    {change > 0 ? '+' : ''}{change}% vs mes anterior
                 </Text>
             </View>
         </Card>

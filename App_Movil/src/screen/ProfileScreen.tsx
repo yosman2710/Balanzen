@@ -18,7 +18,7 @@ import { Button } from '../component/ui/Button';
 import { Switch } from '../component/ui/Switch';
 import { Avatar } from '../component/ui/Avatar';
 import { styles } from '../styles/Profile.style';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { RootStackParamList } from '../navegation/type'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { getUserById, Usuario } from '../api/usuario';
@@ -53,20 +53,22 @@ export function ProfileScreen({
         console.log('Eliminar categoría:', categoryId);
     };
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const userId = await idUser();
-                if (userId) {
-                    const userData = await getUserById(userId);
-                    setUser(userData);
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchUser = async () => {
+                try {
+                    const userId = await idUser();
+                    if (userId) {
+                        const userData = await getUserById(userId);
+                        setUser(userData);
+                    }
+                } catch (error) {
+                    console.error('Error al obtener datos del usuario:', error);
                 }
-            } catch (error) {
-                console.error('Error al obtener datos del usuario:', error);
-            }
-        };
-        fetchUser();
-    }, []);
+            };
+            fetchUser();
+        }, [])
+    );
 
     const displayName = user?.nombre || userName;
     const displayEmail = user?.email || userEmail;
@@ -97,18 +99,21 @@ export function ProfileScreen({
                                 icon={<User size={20} color="#2563eb" />}
                                 iconBg="#dbeafe"
                                 title="Información personal"
+                                onPress={() => navigation.navigate('EditProfile')}
                                 subtitle="Actualiza tu perfil"
                             />
                             <ProfileRow
                                 icon={<Lock size={20} color="#7c3aed" />}
                                 iconBg="#e9d5ff"
                                 title="Seguridad"
+                                onPress={() => navigation.navigate('Security')}
                                 subtitle="Contraseña y autenticación"
                             />
                             <ProfileRow
                                 icon={<Shield size={20} color="#ea580c" />}
                                 iconBg="#ffedd5"
                                 title="Privacidad"
+                                onPress={() => navigation.navigate('Privacy')}
                                 subtitle="Controla tus datos"
                             />
                         </Card>
@@ -150,6 +155,7 @@ export function ProfileScreen({
                                 icon={<Palette size={20} color="#db2777" />}
                                 iconBg="#fce7f3"
                                 title="Apariencia"
+                                onPress={() => navigation.navigate('Appearance')}
                                 subtitle="Tema y personalización"
                                 showChevron
                             />
@@ -157,6 +163,7 @@ export function ProfileScreen({
                                 icon={<Globe size={20} color="#0f766e" />}
                                 iconBg="#ccfbf1"
                                 title="Idioma y región"
+                                onPress={() => navigation.navigate('Language')}
                                 subtitle="Español (México)"
                                 showChevron
                             />
@@ -170,6 +177,7 @@ export function ProfileScreen({
                             <ProfileRow
                                 icon={<HelpCircle size={20} color="#4f46e5" />}
                                 iconBg="#e0e7ff"
+                                onPress={() => navigation.navigate('HelpCenter')}
                                 title="Centro de ayuda"
                                 subtitle="FAQs y tutoriales"
                                 showChevron
@@ -178,6 +186,7 @@ export function ProfileScreen({
                                 icon={<FileText size={20} color="#0891b2" />}
                                 iconBg="#cffafe"
                                 title="Términos y condiciones"
+                                onPress={() => navigation.navigate('Terms')}
                                 subtitle="Políticas de uso"
                                 showChevron
                             />

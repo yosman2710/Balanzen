@@ -36,3 +36,8 @@ export const register = async (payload: {
 export const logout = async () => {
     await removeToken();
 };
+
+export const updatePassword = async (password: string) => {
+    const { data } = await api.put("/auth/update-password", { password });
+    return data;
+};
